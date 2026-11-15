@@ -1,142 +1,316 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GitHub HTML Finder</title>
-<style>
-:root{color-scheme:dark;--bg:#101318;--panel:#191f28;--panel2:#202936;--line:#303b49;--text:#edf2f7;--muted:#9ba9b8;--accent:#77b7ff;--good:#79d6a5;--danger:#ff8d8d}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-.app{max-width:1400px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}
-h1{font-size:22px;margin:0 0 4px}.sub,.muted{color:var(--muted)}.layout{display:grid;grid-template-columns:minmax(280px,390px) 1fr;gap:16px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}.pad{padding:16px}
-label{display:block;font-weight:650;margin:0 0 7px}input{width:100%;background:#0e1319;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:11px 12px;font:inherit;outline:none}
-input:focus{border-color:var(--accent)}.field{margin-bottom:13px}.row{display:flex;gap:8px}.row>*{min-width:0}.row input{flex:1}
-button,.button{border:1px solid var(--line);border-radius:9px;padding:10px 13px;background:var(--panel2);color:var(--text);font:inherit;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-button.primary{background:#245b91;border-color:#367bb8}button:disabled{opacity:.45;cursor:wait}
-.note{font-size:12px;color:var(--muted);margin-top:8px}.status{padding:10px 12px;border-radius:9px;background:#111821;color:var(--muted);margin-top:12px;min-height:40px}
-.status.error{color:var(--danger)}.status.ok{color:var(--good)}
-.toolbar{display:flex;gap:8px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.toolbar input{max-width:260px;padding:8px 10px}.count{margin-left:auto;color:var(--muted);font-size:12px}
-.files{max-height:calc(100vh - 300px);overflow:auto}.file{padding:11px 14px;border-bottom:1px solid #29323d;cursor:pointer;display:flex;align-items:center;gap:10px}
-.file:hover,.file.active{background:#253446}.file .path{overflow-wrap:anywhere;flex:1}.file small{color:var(--muted)}
-.preview-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line)}
-.preview-head strong{flex:1;min-width:180px;overflow-wrap:anywhere}iframe{display:block;width:100%;height:calc(100vh - 220px);min-height:420px;background:white;border:0}
-.empty{display:grid;place-items:center;text-align:center;color:var(--muted);height:420px;padding:24px}
-@media(max-width:850px){.app{padding:14px}.layout{grid-template-columns:1fr}.files{max-height:340px}iframe{height:65vh;min-height:380px}.top{align-items:flex-start;flex-direction:column}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8f5">
+  <title>Codespace Finder</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f5;
+      --panel: #fff;
+      --panel2: #f1f3ee;
+      --text: #20231e;
+      --muted: #747a70;
+      --line: #dfe3da;
+      --accent: #86b92c;
+      --accent-soft: #edf5df;
+      --danger: #bd4949;
+      --shadow: 0 8px 30px rgba(28,35,20,.055);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; }
+    button, input, select { font: inherit; }
+    button { color: inherit; }
+    .shell { width: min(1120px, 100%); margin: 0 auto; padding: 28px 22px 48px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; }
+    .brand { display:flex; align-items:center; gap:12px; min-width:0; }
+    .logo { width:40px; height:40px; display:grid; place-items:center; border:1px solid #cbd7b8; border-radius:13px; background:var(--accent-soft); color:#527b17; font-weight:800; letter-spacing:-1px; }
+    h1 { margin:0; font-size:20px; letter-spacing:-.4px; }
+    .subtitle { margin:4px 0 0; color:var(--muted); font-size:12px; }
+    .scope { display:inline-flex; align-items:center; gap:7px; padding:8px 11px; border:1px solid var(--line); border-radius:999px; background:var(--panel); color:#56604d; font-size:12px; white-space:nowrap; }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+    .search-panel, .browser-panel, .preview-panel { background:var(--panel); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); }
+    .search-panel { padding:18px; margin-bottom:16px; }
+    .search-row { display:flex; gap:9px; }
+    .search-wrap { flex:1; min-width:0; position:relative; }
+    .search-wrap svg { position:absolute; top:50%; left:14px; transform:translateY(-50%); color:#858b80; pointer-events:none; }
+    input[type="search"] { width:100%; height:46px; padding:0 14px 0 42px; border:1px solid #d8ddd2; border-radius:12px; background:#fff; outline:none; color:var(--text); }
+    input[type="search"]:focus, select:focus { border-color:#91b94e; box-shadow:0 0 0 3px rgba(134,185,44,.14); }
+    .primary, .secondary, .quiet { border:1px solid #d5dacd; border-radius:11px; min-height:42px; padding:0 15px; background:#fff; cursor:pointer; transition:background .14s ease,border-color .14s ease,transform .14s ease; }
+    .primary { border-color:#719f27; background:#86b92c; color:#17210b; font-weight:700; }
+    .primary:hover { background:#94c63a; }
+    .secondary:hover, .quiet:hover { background:var(--panel2); }
+    button:active { transform:translateY(1px); }
+    button:focus-visible, a:focus-visible { outline:3px solid rgba(134,185,44,.35); outline-offset:2px; }
+    .filters { display:flex; align-items:center; flex-wrap:wrap; gap:9px 12px; margin-top:13px; }
+    .filters label { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:12px; }
+    select { height:34px; max-width:100%; padding:0 28px 0 10px; border:1px solid var(--line); border-radius:9px; background:#fff; color:var(--text); }
+    .hint { color:var(--muted); font-size:11px; margin-left:auto; }
+    .browser-panel { overflow:hidden; }
+    .panel-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 18px; border-bottom:1px solid var(--line); }
+    .panel-title { font-size:14px; font-weight:750; }
+    .result-count { color:var(--muted); font-size:12px; white-space:nowrap; }
+    .crumbs { display:flex; align-items:center; flex-wrap:wrap; gap:6px; padding:11px 18px; border-bottom:1px solid var(--line); background:#fcfdfb; }
+    .crumb { border:0; padding:4px 5px; color:#64734f; background:transparent; cursor:pointer; font-size:12px; }
+    .crumb:hover { text-decoration:underline; }
+    .crumb-sep { color:#a6aca0; font-size:11px; }
+    .entries { padding:5px 10px 10px; }
+    .entry { display:grid; grid-template-columns:34px minmax(0,1fr) auto; align-items:center; gap:11px; min-height:63px; padding:8px 9px; border-bottom:1px solid #edf0e9; }
+    .entry:last-child { border-bottom:0; }
+    .file-icon { width:34px; height:34px; border-radius:10px; display:grid; place-items:center; background:var(--panel2); color:#65715b; font-size:15px; font-weight:750; }
+    .file-icon.folder { background:#f2f5e9; color:#729629; }
+    .entry-main { min-width:0; }
+    .entry-name { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; font-weight:650; }
+    .entry-path { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:4px; color:var(--muted); font-size:11px; }
+    .entry-meta { display:flex; align-items:center; gap:9px; color:var(--muted); font-size:11px; white-space:nowrap; }
+    .entry-actions { display:flex; align-items:center; gap:6px; }
+    .small-btn { min-height:32px; padding:0 10px; border:1px solid var(--line); border-radius:9px; background:#fff; font-size:11px; cursor:pointer; }
+    .small-btn:hover { background:var(--panel2); }
+    .empty, .loading, .error { padding:34px 16px; text-align:center; color:var(--muted); font-size:13px; }
+    .error { color:var(--danger); }
+    .status { margin:12px 3px 0; min-height:17px; color:var(--muted); font-size:11px; }
+    .preview-panel { display:none; margin-top:16px; overflow:hidden; }
+    .preview-panel.show { display:block; }
+    .preview-top { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 15px; border-bottom:1px solid var(--line); }
+    .preview-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; font-weight:700; }
+    pre { max-height:55vh; overflow:auto; margin:0; padding:16px; color:#293025; background:#fbfcf9; font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre; }
+    .notice { margin:18px 2px 0; color:var(--muted); font-size:11px; line-height:1.7; }
+    .notice code { color:#4f5d40; background:#eef1e9; padding:2px 5px; border-radius:5px; }
+    @media (max-width:650px) {
+      .shell { padding:19px 12px 32px; }
+      header { align-items:flex-start; margin-bottom:17px; }
+      h1 { font-size:18px; }
+      .scope { padding:7px 9px; font-size:10px; }
+      .search-panel { padding:13px; }
+      .search-row { flex-direction:column; }
+      .primary { width:100%; }
+      .hint { width:100%; margin-left:0; }
+      .entry { grid-template-columns:31px minmax(0,1fr); gap:9px; }
+      .file-icon { width:31px; height:31px; }
+      .entry-meta { grid-column:2; margin-top:-3px; }
+      .entry-actions { grid-column:2; }
+      .panel-head { padding:13px 14px; }
+      .crumbs { padding:9px 13px; }
+      .entries { padding:4px 7px 7px; }
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-  <header class="top">
-    <div><h1>GitHub HTML Finder</h1><div class="sub">GitHub リポジトリ内の HTML を検索し、その場でプレビュー・起動</div></div>
-    <span class="muted">単体HTML / API接続</span>
-  </header>
-  <div class="layout">
-    <section class="panel">
-      <div class="pad">
-        <div class="field"><label for="repo">GitHub リポジトリ</label><input id="repo" placeholder="https://github.com/owner/repository または owner/repository"></div>
-        <div class="row">
-          <div class="field" style="flex:1"><label for="branch">ブランチ（任意）</label><input id="branch" placeholder="既定ブランチを自動取得"></div>
-          <button class="primary" id="scan" style="align-self:flex-end">HTMLを検索</button>
+  <main class="shell">
+    <header>
+      <div class="brand">
+        <div class="logo">CS</div>
+        <div>
+          <h1>Codespace Finder</h1>
+          <p class="subtitle">このワークスペース内のファイルを検索して開く</p>
         </div>
-        <div class="field"><label for="token">GitHub トークン（任意）</label><input id="token" type="password" autocomplete="off" placeholder="公開リポジトリなら通常不要"></div>
-        <div class="note">公開リポジトリはトークンなしで利用できます。非公開リポジトリには、対象リポジトリの Contents 読み取り権限を持つトークンが必要です。トークンはこのページ内でのみ使用し、保存・送信先への転送はしません。</div>
-        <div id="status" class="status">リポジトリを入力して「HTMLを検索」を押してください。</div>
       </div>
-      <div class="toolbar"><strong>見つかったHTML</strong><span id="count" class="count">0件</span></div>
-      <div id="files" class="files"><div class="empty">検索結果はここに表示されます。</div></div>
-    </section>
-    <section class="panel">
-      <div class="preview-head">
-        <strong id="selected">プレビュー対象が未選択です</strong>
-        <a id="open" class="button" href="#" target="_blank" rel="noopener" style="pointer-events:none;opacity:.45">別タブで開く</a>
-        <button id="raw" disabled>Rawを開く</button>
+      <div class="scope"><span class="dot"></span>同一Codespace内のみ</div>
+    </header>
+
+    <section class="search-panel" aria-label="ファイル検索">
+      <div class="search-row">
+        <div class="search-wrap">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          <input id="query" type="search" placeholder="ファイル名・フォルダ名を検索（例：index.html）" autocomplete="off">
+        </div>
+        <button id="searchBtn" class="primary" type="button">ワークスペースを検索</button>
       </div>
-      <div id="preview" class="empty">左側の一覧からHTMLファイルを選択してください。</div>
+      <div class="filters">
+        <label>検索対象
+          <select id="mode">
+            <option value="name">ファイル名・パス</option>
+            <option value="content">ファイルの中身</option>
+          </select>
+        </label>
+        <label>種類
+          <select id="typeFilter">
+            <option value="all">すべて</option>
+            <option value="html">HTML</option>
+            <option value="code">コード</option>
+            <option value="text">テキスト・資料</option>
+            <option value="image">画像</option>
+          </select>
+        </label>
+        <span class="hint">検索範囲：このCodespaceでサーバーを起動したフォルダ</span>
+      </div>
     </section>
-  </div>
-</div>
-<script>
-(() => {
-  const $ = id => document.getElementById(id);
-  const state = { files: [], selected: null, headers: {} };
-  const status = (message, type='') => { $('status').textContent = message; $('status').className = 'status ' + type; };
-  function parseRepo(value) {
-    const s = value.trim().replace(/\/+$/, '');
-    const m = s.match(/(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+)\/([^/#?]+)/i);
-    const parts = m ? [m[1], m[2]] : s.split('/');
-    if (parts.length < 2 || !parts[0] || !parts[1]) throw new Error('owner/repository の形式で入力してください。');
-    return { owner: parts[0], repo: parts[1].replace(/\.git$/i, '') };
-  }
-  async function api(url) {
-    const res = await fetch(url, {headers: state.headers});
-    if (!res.ok) {
-      let detail = '';
-      try { const j = await res.json(); detail = j.message || ''; } catch {}
-      throw new Error(`GitHub API エラー (${res.status})${detail ? ': ' + detail : ''}`);
-    }
-    return res.json();
-  }
-  function renderFiles() {
-    $('count').textContent = `${state.files.length}件`;
-    const host = $('files'); host.replaceChildren();
-    if (!state.files.length) { host.innerHTML = '<div class="empty">HTMLファイルが見つかりませんでした。</div>'; return; }
-    for (const file of state.files) {
-      const el = document.createElement('div');
-      el.className = 'file' + (state.selected?.path === file.path ? ' active' : '');
-      const name = document.createElement('span'); name.textContent = 'HTML';
-      const path = document.createElement('span'); path.className = 'path'; path.textContent = file.path;
-      const size = document.createElement('small'); size.textContent = file.size ? `${Math.ceil(file.size/1024)} KB` : '';
-      el.append(name, path, size); el.addEventListener('click', () => selectFile(file)); host.append(el);
-    }
-  }
-  async function selectFile(file) {
-    state.selected = file; renderFiles();
-    $('selected').textContent = file.path;
-    $('preview').className = ''; $('preview').replaceChildren();
-    $('preview').textContent = 'HTMLを読み込んでいます…';
-    const rawUrl = `https://raw.githubusercontent.com/${file.owner}/${file.repo}/${encodeURIComponent(file.branch).replace(/%2F/g,'/')}/${file.path.split('/').map(encodeURIComponent).join('/')}`;
-    $('open').href = rawUrl; $('open').style.pointerEvents = 'auto'; $('open').style.opacity = '1';
-    $('raw').disabled = false; $('raw').onclick = () => window.open(rawUrl, '_blank', 'noopener');
-    try {
-      const res = await fetch(rawUrl, {headers: state.headers});
-      if (!res.ok) throw new Error(`HTML取得に失敗しました (${res.status})`);
-      const source = await res.text();
-      const frame = document.createElement('iframe');
-      frame.title = file.path;
-      frame.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox');
-      frame.srcdoc = source;
-      $('preview').replaceChildren(frame);
-    } catch (e) {
-      $('preview').className = 'empty'; $('preview').textContent = e.message;
-    }
-  }
-  async function scan() {
-    $('scan').disabled = true; state.files = []; state.selected = null; renderFiles();
-    $('preview').className = 'empty'; $('preview').textContent = '検索結果からHTMLを選択してください。';
-    $('open').href = '#'; $('open').style.pointerEvents = 'none'; $('open').style.opacity = '.45'; $('raw').disabled = true;
-    try {
-      const {owner, repo} = parseRepo($('repo').value);
-      const token = $('token').value.trim();
-      state.headers = token ? {Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28'} : {Accept:'application/vnd.github+json'};
-      status('リポジトリ情報を取得しています…');
-      const info = await api(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`);
-      const branch = $('branch').value.trim() || info.default_branch;
-      status(`ブランチ「${branch}」のファイル一覧を取得しています…`);
-      const tree = await api(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/git/trees/${encodeURIComponent(branch)}?recursive=1`);
-      if (tree.truncated) status('注意: GitHub側でツリー結果が省略されています。大規模リポジトリでは全件取得できない場合があります。');
-      state.files = (tree.tree || []).filter(x => x.type === 'blob' && /\.html?$/i.test(x.path))
-        .map(x => ({path:x.path, size:x.size || 0, owner, repo, branch}))
-        .sort((a,b) => a.path.localeCompare(b.path));
-      renderFiles();
-      status(`${owner}/${repo} の ${branch} からHTMLを ${state.files.length}件検出しました。`, 'ok');
-    } catch(e) { status(e.message, 'error'); }
-    finally { $('scan').disabled = false; }
-  }
-  $('scan').addEventListener('click', scan);
-  $('repo').addEventListener('keydown', e => { if(e.key === 'Enter') scan(); });
-})();
-</script>
+
+    <section class="browser-panel">
+      <div class="panel-head">
+        <div class="panel-title" id="listTitle">ワークスペース</div>
+        <div class="result-count" id="resultCount">読み込み中</div>
+      </div>
+      <nav class="crumbs" id="crumbs" aria-label="フォルダ階層"></nav>
+      <div class="entries" id="entries"><div class="loading">Codespaceに接続しています…</div></div>
+    </section>
+    <div class="status" id="status" role="status"></div>
+
+    <section class="preview-panel" id="previewPanel">
+      <div class="preview-top">
+        <div class="preview-name" id="previewName"></div>
+        <div class="entry-actions">
+          <button class="small-btn" id="openPreview" type="button">別タブで開く</button>
+          <button class="small-btn" id="closePreview" type="button">閉じる</button>
+        </div>
+      </div>
+      <pre id="previewText"></pre>
+    </section>
+
+    <p class="notice">このページは、開いているCodespaceと同じ接続先のAPIだけを使用します。GitHub上の別リポジトリや別Codespaceは検索しません。HTMLファイルは別タブで開き、テキスト系ファイルは内容を確認できます。</p>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+      const $ = (id) => document.getElementById(id);
+      const state = { path: '', searchResults: null, previewPath: '' };
+      const TEXT_EXT = new Set(['txt','md','markdown','json','js','mjs','cjs','ts','tsx','jsx','css','scss','html','htm','xml','svg','py','pyw','java','kt','kts','c','h','cpp','hpp','cs','go','rs','php','rb','sh','bash','yml','yaml','toml','ini','cfg','csv','sql','log','vue','svelte','astro','gradle','properties','env','gitignore']);
+      const CODE_EXT = new Set(['js','mjs','cjs','ts','tsx','jsx','css','scss','py','pyw','java','kt','kts','c','h','cpp','hpp','cs','go','rs','php','rb','sh','bash','sql','vue','svelte','astro']);
+      const IMAGE_EXT = new Set(['png','jpg','jpeg','gif','webp','svg','ico','bmp','avif']);
+      const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const extOf = (p) => (p.split('/').pop().split('.').pop() || '').toLowerCase();
+      const formatSize = (n) => n < 1024 ? `${n} B` : n < 1024*1024 ? `${(n/1024).toFixed(1)} KB` : `${(n/1024/1024).toFixed(1)} MB`;
+      const api = async (route, params = {}) => {
+        const url = new URL(route, window.location.origin);
+        Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+        const res = await fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.error) throw new Error(data.error || `HTTP ${res.status}`);
+        return data;
+      };
+      const fileUrl = (p) => `/file/${p.split('/').map(encodeURIComponent).join('/')}`;
+      const setStatus = (s) => { $('status').textContent = s || ''; };
+
+      function renderCrumbs(path) {
+        const bits = path ? path.split('/').filter(Boolean) : [];
+        let current = '';
+        const parts = [`<button class="crumb" data-path="">ワークスペース</button>`];
+        for (const bit of bits) {
+          current = current ? `${current}/${bit}` : bit;
+          parts.push(`<span class="crumb-sep">›</span><button class="crumb" data-path="${esc(current)}">${esc(bit)}</button>`);
+        }
+        $('crumbs').innerHTML = parts.join('');
+        $('crumbs').querySelectorAll('button').forEach(b => b.addEventListener('click', () => loadDirectory(b.dataset.path)));
+      }
+
+      function typeMatches(item, filter) {
+        if (item.type === 'directory') return true;
+        const ext = extOf(item.path);
+        if (filter === 'all') return true;
+        if (filter === 'html') return ['html','htm'].includes(ext);
+        if (filter === 'code') return CODE_EXT.has(ext);
+        if (filter === 'image') return IMAGE_EXT.has(ext);
+        if (filter === 'text') return TEXT_EXT.has(ext) && !CODE_EXT.has(ext) && !['html','htm'].includes(ext);
+        return true;
+      }
+
+      function iconFor(item) {
+        if (item.type === 'directory') return ['▰','folder'];
+        const ext = extOf(item.path);
+        if (['html','htm'].includes(ext)) return ['H',''];
+        if (IMAGE_EXT.has(ext)) return ['▧',''];
+        if (CODE_EXT.has(ext)) return ['‹›',''];
+        if (['pdf'].includes(ext)) return ['PDF',''];
+        return ['T',''];
+      }
+
+      function renderEntries(items, title, isSearch = false) {
+        const filter = $('typeFilter').value;
+        const visible = items.filter(x => typeMatches(x, filter));
+        $('listTitle').textContent = title;
+        $('resultCount').textContent = `${visible.length} 件`;
+        if (!visible.length) {
+          $('entries').innerHTML = '<div class="empty">該当するファイルはありません。</div>';
+          return;
+        }
+        $('entries').innerHTML = visible.map(item => {
+          const [symbol, extra] = iconFor(item);
+          const directory = item.type === 'directory';
+          const pathLabel = isSearch ? item.path : (item.path || item.name);
+          const meta = directory ? 'フォルダ' : `${formatSize(item.size || 0)}${item.modified ? ` · ${new Date(item.modified*1000).toLocaleDateString('ja-JP')}` : ''}`;
+          const label = item.name === 'index.html' ? ' · index.html' : '';
+          return `<article class="entry">
+            <div class="file-icon ${extra}">${symbol}</div>
+            <div class="entry-main"><span class="entry-name">${esc(item.name)}${label}</span><span class="entry-path">${esc(pathLabel)}</span></div>
+            <div class="entry-meta"><span>${meta}</span><span class="entry-actions">${directory ? `<button class="small-btn" data-action="folder" data-path="${esc(item.path)}">開く</button>` : `<button class="small-btn" data-action="open" data-path="${esc(item.path)}">開く</button>`}</span></div>
+          </article>`;
+        }).join('');
+        $('entries').querySelectorAll('button[data-action]').forEach(btn => btn.addEventListener('click', () => {
+          if (btn.dataset.action === 'folder') loadDirectory(btn.dataset.path);
+          else openFile(btn.dataset.path);
+        }));
+      }
+
+      async function loadDirectory(path = '') {
+        state.path = path;
+        state.searchResults = null;
+        $('query').value = '';
+        renderCrumbs(path);
+        $('entries').innerHTML = '<div class="loading">フォルダを読み込んでいます…</div>';
+        setStatus('');
+        try {
+          const data = await api('/api/list', { path });
+          const dirs = data.entries.filter(x => x.type === 'directory').sort((a,b) => a.name.localeCompare(b.name, 'ja'));
+          const files = data.entries.filter(x => x.type === 'file').sort((a,b) => a.name.localeCompare(b.name, 'ja'));
+          renderEntries([...dirs, ...files], path || 'ワークスペース');
+          $('resultCount').textContent = `${data.entries.length} 件`;
+          setStatus(`接続先：${window.location.host} ／ 検索対象フォルダ：${data.rootName}`);
+        } catch (err) {
+          $('entries').innerHTML = `<div class="error">接続できませんでした：${esc(err.message)}<br><br>補助サーバーが起動しているか確認してください。</div>`;
+          $('resultCount').textContent = '接続エラー';
+        }
+      }
+
+      async function runSearch() {
+        const q = $('query').value.trim();
+        if (!q) { loadDirectory(state.path); return; }
+        const mode = $('mode').value;
+        $('entries').innerHTML = '<div class="loading">ワークスペース内を検索しています…</div>';
+        $('listTitle').textContent = mode === 'content' ? '内容の検索結果' : 'ファイル名の検索結果';
+        setStatus('');
+        try {
+          const data = await api('/api/search', { q, mode });
+          state.searchResults = data.results;
+          renderEntries(data.results, `「${q}」の検索結果`, true);
+          setStatus(data.truncated ? '検索結果が多いため、先頭200件を表示しています。' : `検索対象：このCodespace内 ／ ${data.scanned} ファイルを確認`);
+        } catch (err) {
+          $('entries').innerHTML = `<div class="error">検索に失敗しました：${esc(err.message)}</div>`;
+        }
+      }
+
+      async function openFile(path) {
+        const ext = extOf(path);
+        state.previewPath = path;
+        if (['html','htm','pdf','png','jpg','jpeg','gif','webp','svg','mp4','webm','mp3','wav'].includes(ext)) {
+          window.open(fileUrl(path), '_blank', 'noopener');
+          return;
+        }
+        try {
+          const data = await api('/api/read', { path });
+          $('previewName').textContent = path;
+          $('previewText').textContent = data.content;
+          $('previewPanel').classList.add('show');
+          $('openPreview').onclick = () => window.open(fileUrl(path), '_blank', 'noopener');
+          $('previewPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (err) {
+          setStatus(`プレビューできません：${err.message}`);
+          window.open(fileUrl(path), '_blank', 'noopener');
+        }
+      }
+
+      $('searchBtn').addEventListener('click', runSearch);
+      $('query').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(); });
+      $('typeFilter').addEventListener('change', () => {
+        if (state.searchResults) renderEntries(state.searchResults, `「${$('query').value.trim()}」の検索結果`, true);
+        else loadDirectory(state.path);
+      });
+      $('closePreview').addEventListener('click', () => $('previewPanel').classList.remove('show'));
+      loadDirectory('');
+    })();
+  </script>
 </body>
 </html>
