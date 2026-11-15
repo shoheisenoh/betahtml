@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3f5f8">
+<title>AI Layer Lab — Image Decode Fix v8</title>
+<style>
+:root{color-scheme:light;--bg:#f2f4f7;--panel:#fff;--panel2:#f8f9fb;--line:#dfe3e9;--line2:#cfd5df;--ink:#222936;--muted:#707987;--soft:#eef1f5;--accent:#8ec720;--accent-dark:#669a0d;--accent-soft:#f0f8df;--blue:#587fc5;--blue-soft:#edf3ff;--good:#438c50;--warn:#b47a25;--bad:#bd5757;--radius:20px;--shadow:0 8px 26px rgba(28,39,57,.055)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{padding:16px}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}.app{max-width:1540px;margin:0 auto;display:grid;grid-template-columns:226px minmax(0,1fr);gap:16px;min-height:calc(100vh - 32px)}.sidebar,.topbar,.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.sidebar{padding:16px;display:flex;flex-direction:column;gap:18px;min-height:calc(100vh - 32px)}.brand{display:flex;align-items:center;gap:11px;padding:4px 2px 14px;border-bottom:1px solid var(--line)}.brandmark{height:42px;width:42px;border-radius:13px;background:#242b35;color:#fff;display:grid;place-items:center;font-size:19px;font-weight:800;letter-spacing:-1px}.brandname{font-size:15px;font-weight:800;letter-spacing:-.3px}.brandmeta{font-size:10px;color:var(--muted);margin-top:3px}.navgroup{display:grid;gap:6px}.navlabel{padding:0 9px;color:var(--muted);font-size:10px;letter-spacing:1.4px;font-weight:800}.navbtn{width:100%;border:0;background:transparent;color:#536070;border-radius:12px;text-align:left;padding:11px 10px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:650}.navbtn .ico{width:19px;text-align:center;font-size:16px}.navbtn.active{background:var(--accent-soft);color:#3f6212;box-shadow:inset 0 0 0 1px #d9edb5}.sidefoot{margin-top:auto;border:1px solid var(--line);background:var(--panel2);padding:12px;border-radius:14px}.tiny{font-size:10px;color:var(--muted);line-height:1.55}.workspace{min-width:0;display:flex;flex-direction:column;gap:14px}.topbar{padding:13px 17px;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:68px}.titlewrap{display:flex;align-items:center;gap:12px;min-width:0}.mobile-menu{display:none}.title{font-size:16px;font-weight:800;letter-spacing:-.3px}.subtitle{color:var(--muted);font-size:11px;margin-top:3px}.top-actions{display:flex;align-items:center;gap:8px}.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:10px;font-weight:700;white-space:nowrap}.dot{width:7px;height:7px;border-radius:50%;background:#aab2bd}.dot.good{background:var(--good)}.btn{border:1px solid var(--line2);background:#fff;color:var(--ink);border-radius:11px;padding:9px 12px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:36px}.btn:hover{background:#f7f9fb}.btn.primary{background:#252d38;color:#fff;border-color:#252d38}.btn.accent{background:var(--accent);color:#1f2a12;border-color:var(--accent)}.btn.subtle{background:var(--panel2)}.btn.small{min-height:30px;padding:6px 9px;font-size:10px}.btn.icon{width:34px;padding:0}.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 314px;gap:14px;align-items:start}.leftstack,.rightstack{display:grid;gap:14px;min-width:0}.panel{padding:16px;min-width:0}.panelhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.paneltitle{font-size:13px;font-weight:800}.paneldesc{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.55}.muted{color:var(--muted)}.uploadbox{min-height:132px;border:1.5px dashed #c9d1dc;border-radius:16px;background:linear-gradient(180deg,#fcfdff,#f7f9fc);display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;transition:.16s}.uploadbox.drag{border-color:var(--accent-dark);background:var(--accent-soft)}.uploadicon{font-size:27px;margin-bottom:8px}.uploadmain{font-size:13px;font-weight:750}.uploadsub{font-size:10px;color:var(--muted);margin-top:6px}.filemeta{display:flex;align-items:center;gap:9px;margin-top:10px;padding:8px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:11px}.filemeta strong{font-size:10px}.filemeta span{font-size:9px;color:var(--muted)}.previewbox{background-color:#f4f6f8;background-image:linear-gradient(45deg,#e7eaee 25%,transparent 25%),linear-gradient(-45deg,#e7eaee 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#e7eaee 75%),linear-gradient(-45deg,transparent 75%,#e7eaee 75%);background-size:18px 18px;background-position:0 0,0 9px,9px -9px,-9px 0;border:1px solid var(--line);border-radius:15px;min-height:270px;display:grid;place-items:center;overflow:hidden;position:relative}.previewbox.empty:before{content:"画像を読み込むと、ここにプレビューが表示されます";font-size:11px;color:#858e9b;text-align:center;padding:22px}.previewbox img{max-width:100%;max-height:540px;object-fit:contain;display:block}.preview-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}.switchline{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--muted)}input[type=checkbox]{accent-color:var(--accent-dark)}.tasklist{display:grid;gap:9px}.task{border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;display:flex;gap:11px;align-items:flex-start}.task.current{border-color:#b7d87a;background:#fbfef5}.task.disabled{opacity:.62}.taskicon{height:34px;width:34px;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-size:16px;flex:none}.taskbody{flex:1;min-width:0}.taskname{font-size:11px;font-weight:800}.taskdesc{font-size:9px;line-height:1.5;color:var(--muted);margin-top:4px}.tasktag{font-size:9px;font-weight:750;color:#587a23;white-space:nowrap}.taskfoot{margin-top:7px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}.taskfoot select,.field select{border:1px solid var(--line2);border-radius:8px;background:#fff;color:var(--ink);padding:6px 8px;font-size:10px;max-width:100%}.enginecard{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel2)}.enginehead{display:flex;align-items:center;justify-content:space-between;gap:8px}.enginehead strong{font-size:11px}.statuspill{font-size:9px;border-radius:999px;padding:5px 8px;background:#edf0f4;color:#697382;font-weight:750}.statuspill.good{background:#e8f5e9;color:#397b43}.statuspill.warn{background:#fff4df;color:#98661d}.statuspill.bad{background:#fdeeee;color:#a64c4c}.diaggrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}.diag{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px}.diaglabel{font-size:9px;color:var(--muted)}.diagvalue{font-size:10px;font-weight:800;margin-top:4px}.field{display:grid;gap:6px;margin-top:11px}.field label{font-size:10px;color:var(--muted);font-weight:700}.field select{width:100%;padding:9px}.modelrow{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:10px 0;border-top:1px solid var(--line)}.modelrow:first-of-type{border-top:0}.modelrow strong{font-size:10px}.modelrow p{font-size:9px;color:var(--muted);margin:4px 0 0;line-height:1.45}.log{height:150px;overflow:auto;background:#202630;color:#d6dce5;border-radius:12px;padding:10px;font:10px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}.logline{white-space:pre-wrap;overflow-wrap:anywhere}.logtime{color:#91a0b5}.resultlist{display:grid;gap:7px}.resultempty{padding:16px;text-align:center;border:1px dashed var(--line2);border-radius:12px;color:var(--muted);font-size:10px}.resultitem{border:1px solid var(--line);border-radius:11px;padding:9px;display:flex;align-items:center;justify-content:space-between;gap:8px}.resultitem strong{font-size:10px}.resultitem small{font-size:9px;color:var(--muted)}.progress{height:6px;background:#e8ebef;border-radius:99px;overflow:hidden;margin-top:10px}.progress>i{height:100%;width:0;display:block;background:var(--accent);transition:width .2s}.notice{border:1px solid #e8dfc9;background:#fffaf0;border-radius:12px;padding:10px;font-size:9px;line-height:1.55;color:#765c2e}.divider{height:1px;background:var(--line);margin:12px 0}.hidden{display:none!important}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#242b35;color:#fff;padding:10px 14px;border-radius:11px;font-size:11px;z-index:50;box-shadow:var(--shadow);max-width:calc(100vw - 30px)}.modalback{position:fixed;inset:0;background:rgba(20,27,36,.42);display:none;align-items:center;justify-content:center;padding:16px;z-index:40}.modalback.show{display:flex}.modal{width:min(520px,100%);background:#fff;border-radius:18px;padding:18px;box-shadow:0 18px 60px rgba(0,0,0,.18)}.modal h3{margin:0 0 8px;font-size:15px}.modal p{font-size:11px;line-height:1.6;color:var(--muted)}.modalactions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.tag{font-size:9px;border:1px solid var(--line);border-radius:6px;padding:3px 6px;color:var(--muted)}
+.prompt-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
+.previewbox.sam-select-active #previewImage{cursor:crosshair}
+.prompt-tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+.prompt-tools select{min-height:30px;border:1px solid var(--line2);border-radius:8px;padding:5px 8px;background:#fff;color:var(--ink);font-size:10px}
+.prompt-count{font-size:9px;color:var(--muted);font-weight:700}
+.btn.selected{background:var(--accent-soft);border-color:#b7d87a;color:#3f6212}
+.sam-note{font-size:9px;line-height:1.55;color:var(--muted);margin-top:7px}
+.sam-auto-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
+.sam-auto-row select{min-height:30px;border:1px solid var(--line2);border-radius:8px;padding:5px 8px;background:#fff;color:var(--ink);font-size:10px}
+.sam-candidate-panel{border:1px solid var(--line);border-radius:12px;background:var(--panel2);padding:9px;margin-top:9px}
+.sam-candidate-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:10px;font-weight:800}
+.sam-candidate-list{display:grid;gap:7px;margin-top:8px;max-height:300px;overflow:auto}
+.sam-candidate{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:9px;padding:7px;border:1px solid var(--line);background:var(--panel);border-radius:10px;min-width:0}
+.sam-candidate-thumb{width:64px;height:54px;object-fit:contain;border:1px solid var(--line);border-radius:7px;background-color:#f1f3f6;background-image:linear-gradient(45deg,#e3e7ec 25%,transparent 25%),linear-gradient(-45deg,#e3e7ec 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#e3e7ec 75%),linear-gradient(-45deg,transparent 75%,#e3e7ec 75%);background-size:12px 12px;background-position:0 0,0 6px,6px -6px,-6px 0}
+.sam-candidate-info{min-width:0;display:grid;gap:4px}
+.sam-candidate-info strong{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sam-candidate-info small{font-size:9px;color:var(--muted);line-height:1.4}
+.sam-candidate-check{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--muted);white-space:nowrap}
+.sam-candidate-note{font-size:9px;color:var(--muted);line-height:1.55;margin-top:7px}
+@media(max-width:480px){.sam-candidate{grid-template-columns:56px minmax(0,1fr) auto}.sam-candidate-thumb{width:56px;height:48px}}
+
+.sam-runrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
+.sam-runrow .btn{flex:1}
+.previewbox img{position:relative;z-index:1}
+
+@media(max-width:1120px){.app{grid-template-columns:190px minmax(0,1fr)}.main-grid{grid-template-columns:minmax(0,1fr) 282px}.panel{padding:13px}}
+@media(max-width:900px){body{padding:10px}.app{grid-template-columns:1fr;min-height:calc(100vh - 20px)}.sidebar{display:none;position:fixed;z-index:30;inset:10px auto 10px 10px;width:min(280px,85vw);min-height:0}.sidebar.open{display:flex}.mobile-menu{display:inline-flex}.main-grid{grid-template-columns:minmax(0,1fr) 280px}.topbar{padding:11px 13px}}
+@media(max-width:700px){.main-grid{grid-template-columns:1fr}.rightstack{grid-template-columns:1fr 1fr}.rightstack .panel:last-child{grid-column:1/-1}.previewbox{min-height:230px}.top-actions .chip{display:none}}
+@media(max-width:480px){.top-actions #diagnoseBtn{display:none}body{padding:8px}.app{gap:9px;min-height:calc(100vh - 16px)}.workspace{gap:9px}.topbar{min-height:60px;padding:9px 10px;border-radius:16px}.brandmark{width:36px;height:36px;border-radius:11px}.title{font-size:13px}.subtitle{font-size:9px}.top-actions{gap:5px}.top-actions .btn{min-height:32px;padding:7px 9px;font-size:10px}.panel{padding:11px;border-radius:16px}.main-grid{gap:9px}.rightstack{grid-template-columns:1fr}.rightstack .panel:last-child{grid-column:auto}.previewbox{min-height:190px}.uploadbox{min-height:112px;padding:14px}.diaggrid{grid-template-columns:1fr 1fr}.panelhead{margin-bottom:10px}.task{padding:10px}}
+
+.ocr-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
+.ocr-tools select{min-height:30px;border:1px solid var(--line2);border-radius:8px;padding:5px 8px;background:#fff;color:var(--ink);font-size:10px}
+.ocr-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.ocr-actions .btn{flex:1}
+.ocr-lines{display:grid;gap:7px;margin-top:10px;max-height:290px;overflow:auto}
+.ocr-line{display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;align-items:start;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.ocr-line-index{width:24px;height:24px;border-radius:7px;background:var(--blue-soft);color:var(--blue);display:grid;place-items:center;font-size:10px;font-weight:800}
+.ocr-line-main{min-width:0;display:grid;gap:5px}
+.ocr-line input[type=text]{width:100%;min-width:0;border:1px solid var(--line2);border-radius:7px;padding:7px 8px;background:#fff;color:var(--ink);font-size:11px}
+.ocr-line-meta{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;color:var(--muted);font-size:9px}
+.ocr-line-meta label{display:flex;align-items:center;gap:4px}
+.ocr-preview-box{position:relative}
+.ocr-note{font-size:9px;color:var(--muted);line-height:1.55;margin-top:7px}
+.ocr-statusrow{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+@media(max-width:720px){.ocr-actions .btn{flex:1 1 100%}.ocr-line input[type=text]{font-size:12px}}
+
+
+.inpaint-tools{display:grid;gap:9px;margin-top:9px}
+.inpaint-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.inpaint-row .btn{flex:1}
+.inpaint-control{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.inpaint-control label{font-size:10px;color:var(--muted);font-weight:700}
+.inpaint-control input[type=range]{width:100%;accent-color:var(--accent-dark)}
+.inpaint-control output{font-size:10px;font-weight:800;min-width:45px;text-align:right}
+.inpaint-control select{border:1px solid var(--line2);border-radius:8px;background:#fff;padding:6px 8px;font-size:10px;color:var(--ink)}
+.inpaint-statusnote{font-size:9px;line-height:1.55;color:var(--muted)}
+.inpaint-preview-active #promptOverlay{pointer-events:auto!important;cursor:crosshair;touch-action:none}
+.inpaint-mask-pill{display:inline-flex;align-items:center;gap:5px;font-size:9px;color:var(--bad);font-weight:800}
+.inpaint-mask-pill:before{content:"";width:8px;height:8px;border-radius:50%;background:#de6262}
+#inpaintLicenseModal .modal{max-width:560px}
+@media(max-width:480px){.inpaint-row .btn{flex:1 1 100%}.inpaint-control{grid-template-columns:minmax(0,1fr) auto}}
+
+
+/* Design Parsing / editable scene graph */
+.design-parse{display:grid;gap:12px;margin-top:10px}
+.design-parse-toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.design-source-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.design-source{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:9px 10px;min-width:0}
+.design-source strong{display:block;font-size:11px}
+.design-source span{display:block;font-size:10px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.design-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.design-stat{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:9px;text-align:center}
+.design-stat b{display:block;font-size:19px;line-height:1.1;font-variant-numeric:tabular-nums}
+.design-stat span{display:block;font-size:9px;color:var(--muted);margin-top:4px}
+.design-tree{display:grid;gap:7px;max-height:440px;overflow:auto;padding:2px}
+.design-empty{padding:18px;border:1px dashed var(--line2);border-radius:12px;color:var(--muted);font-size:11px;text-align:center;line-height:1.7}
+.design-group{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:8px 10px 5px}
+.design-group-head{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;color:#667181;padding:1px 1px 6px}
+.design-layer{display:grid;grid-template-columns:24px minmax(100px,1fr) minmax(90px,118px) auto;gap:7px;align-items:center;border:1px solid var(--line);background:var(--panel);border-radius:11px;padding:7px;min-width:0}
+.design-layer.selected{border-color:var(--blue);box-shadow:0 0 0 2px rgba(88,127,197,.12)}
+.design-layer-icon{width:24px;height:24px;border-radius:7px;background:var(--soft);display:grid;place-items:center;font-size:12px;color:#687588}
+.design-layer-main{min-width:0;display:grid;gap:4px}
+.design-layer-name{width:100%;min-width:0;border:1px solid var(--line);border-radius:7px;padding:6px 7px;font-size:11px;background:var(--panel2);color:var(--ink)}
+.design-layer-meta{font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.design-layer-type{width:100%;min-width:0;border:1px solid var(--line);border-radius:7px;background:var(--panel2);color:var(--ink);font-size:10px;padding:7px 5px}
+.design-layer-actions{display:flex;align-items:center;gap:3px}
+.design-layer-actions button{width:27px;height:27px;padding:0;display:grid;place-items:center;font-size:11px}
+.design-layer-actions label{display:flex;align-items:center;gap:3px;font-size:9px;color:var(--muted);white-space:nowrap}
+.design-layer-actions input{margin:0}
+.design-note{padding:10px 11px;border-radius:10px;background:var(--blue-soft);color:#4b6082;font-size:10px;line-height:1.65}
+.design-warning{padding:9px 10px;border-radius:10px;background:#fff7e9;border:1px solid #f1dfbd;color:#83602d;font-size:10px;line-height:1.6}
+.design-overlay-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:9px;color:var(--muted)}
+.design-legend-dot{width:8px;height:8px;border-radius:3px;display:inline-block;margin-right:4px}
+@media(max-width:760px){.design-source-grid{grid-template-columns:1fr}.design-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.design-layer{grid-template-columns:22px minmax(85px,1fr) minmax(78px,94px);}.design-layer-actions{grid-column:2 / -1;justify-content:flex-end}.design-layer-actions button{width:32px;height:30px}}
+
+
+.design-properties{border:1px solid var(--line);border-radius:12px;padding:11px;background:var(--panel2);display:grid;gap:9px}
+.design-properties.hidden{display:none}
+.design-properties-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:800}
+.design-geometry-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.design-property-field{display:grid;gap:4px;min-width:0;color:var(--muted);font-size:9px;font-weight:700}
+.design-property-field input{width:100%;min-width:0;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:7px 6px;color:var(--ink);font-size:11px}
+.design-property-field.full{grid-column:1/-1}
+@media(max-width:760px){.design-geometry-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Stage 7: scene composition and source comparison; v8: worker image decode fix */
+.composition-panel{margin-top:14px;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--panel2)}
+.composition-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:11px}
+.composition-head strong{font-size:13px;font-weight:750}.composition-subtitle{font-size:11px;color:var(--muted);line-height:1.5;margin-top:3px}
+.composition-controls{display:flex;align-items:end;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.composition-field{display:grid;gap:4px;font-size:10px;color:var(--muted);font-weight:650;min-width:142px}
+.composition-field select{min-height:34px;border:1px solid var(--line2);border-radius:9px;background:var(--panel);color:var(--ink);padding:0 9px;font-size:11px;max-width:100%}
+.composition-compare-control{display:flex;align-items:center;gap:9px;margin:3px 0 10px;font-size:10px;color:var(--muted)}
+.composition-compare-control input{flex:1;min-width:70px;accent-color:var(--accent-dark)}.composition-compare-control output{min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.composition-canvas-wrap{position:relative;min-height:150px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:8px}
+.composition-canvas-wrap.checkerboard{background-color:#fff;background-image:linear-gradient(45deg,#e8ebef 25%,transparent 25%),linear-gradient(-45deg,#e8ebef 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#e8ebef 75%),linear-gradient(-45deg,transparent 75%,#e8ebef 75%);background-size:18px 18px;background-position:0 0,0 9px,9px -9px,-9px 0}
+#compositionCanvas{display:block;max-width:100%;height:auto;max-height:62vh;object-fit:contain;box-shadow:0 2px 12px rgba(25,35,50,.12);border-radius:3px}
+.composition-empty{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;font-size:11px;color:var(--muted);pointer-events:none}
+.composition-empty.hidden{display:none}.composition-foot{font-size:10px;color:var(--muted);line-height:1.6;margin-top:9px}
+@media(max-width:700px){.composition-panel{padding:10px}.composition-controls{align-items:stretch}.composition-field{flex:1 1 132px;min-width:0}.composition-controls button{flex:1 1 130px}#compositionCanvas{max-height:48vh}.composition-canvas-wrap{min-height:125px}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brandmark">AI</div><div><div class="brandname">Layer Intelligence Lab</div><div class="brandmeta">独立AI処理基盤 / v1.1</div></div></div>
+    <div class="navgroup"><div class="navlabel">WORKSPACE</div>
+      <button class="navbtn active" data-nav="overview"><span class="ico">◫</span>ワークベンチ</button>
+      <button class="navbtn" data-nav="assets"><span class="ico">▧</span>入力素材</button>
+      <button class="navbtn" data-nav="jobs"><span class="ico">◷</span>処理ジョブ</button>
+      <button class="navbtn" data-nav="outputs"><span class="ico">▤</span>生成結果</button>
+    </div>
+    <div class="navgroup"><div class="navlabel">AI SYSTEM</div>
+      <button class="navbtn" data-nav="runtime"><span class="ico">⌘</span>実行環境</button>
+      <button class="navbtn" data-nav="models"><span class="ico">⬡</span>モデル管理</button>
+      <button class="navbtn" data-nav="pipeline"><span class="ico">⌁</span>処理パイプライン</button>
+    </div>
+    <div class="sidefoot"><div style="font-size:10px;font-weight:800;margin-bottom:5px">LOCAL-FIRST DESIGN</div><div class="tiny">画像は原則としてブラウザー内で処理します。初回のライブラリ・モデル取得にはインターネット接続が必要です。</div></div>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div class="titlewrap"><button class="btn icon mobile-menu" id="menuBtn" aria-label="メニュー">☰</button><div><div class="title">AI Processing Workbench</div><div class="subtitle">Magic Layers のための独立AI開発基盤</div></div></div>
+      <div class="top-actions"><span class="chip"><i class="dot" id="headerDot"></i><span id="headerState">未初期化</span></span><button class="btn" id="diagnoseBtn">環境診断</button><button class="btn primary" id="initBtn">AIエンジンを初期化</button></div>
+    </header>
+
+    <div class="main-grid">
+      <div class="leftstack">
+        <section class="panel" id="inputPanel">
+          <div class="panelhead"><div><div class="paneltitle">入力素材</div><div class="paneldesc">AI解析の対象となる画像を読み込みます。元画像は変更せず、処理結果を別データとして作成します。</div></div><span class="tag" id="inputTag">NO IMAGE</span></div>
+          <div class="uploadbox" id="dropzone" tabindex="0" role="button" aria-label="画像を選択またはドロップ">
+            <div><div class="uploadicon">＋</div><div class="uploadmain">画像をドロップ、またはファイルを選択</div><div class="uploadsub">PNG / JPEG / WebP ・ 1ファイル ・ まずは 20MP 以下を推奨</div><div style="margin-top:12px"><button class="btn" id="chooseBtn" type="button">画像を選択</button></div></div>
+          </div>
+          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" hidden>
+          <div class="filemeta hidden" id="fileMeta"><div style="font-size:18px">▧</div><div style="flex:1;min-width:0"><strong id="fileName">—</strong><br><span id="fileInfo">—</span></div><button class="btn small" id="removeFileBtn">解除</button></div>
+        </section>
+
+        <section class="panel">
+          <div class="panelhead"><div><div class="paneltitle">画像プレビュー</div><div class="paneldesc">入力画像とAIの出力を確認する領域です。</div></div><div style="display:flex;gap:6px"><button class="btn small" id="showInputBtn">入力</button><button class="btn small" id="showOutputBtn" disabled>出力</button></div></div>
+          <div class="previewbox empty" id="previewBox"><img id="previewImage" class="hidden" alt="入力画像プレビュー"><canvas id="promptOverlay" class="prompt-overlay hidden" aria-hidden="true"></canvas></div>
+          <div class="preview-actions"><label class="switchline"><input type="checkbox" id="checkerToggle" checked> 透明背景チェッカー</label><span class="tiny" id="previewDims">画像未選択</span></div>
+          <div class="progress hidden" id="progressWrap"><i id="progressBar"></i></div>
+        </section>
+
+        <section class="panel">
+          <div class="panelhead"><div><div class="paneltitle">AIタスク</div><div class="paneldesc">AI基盤に登録する処理モジュール。Magic Layers本体は各モジュールを組み合わせて構築します。</div></div><span class="tag">TASK REGISTRY</span></div>
+          <div class="tasklist">
+            <div class="task current">
+              <div class="taskicon">◐</div><div class="taskbody"><div class="taskname">前景抽出 / 背景除去 <span class="tasktag">実行可能</span></div><div class="taskdesc">MODNetによる人物・前景のアルファマット推定。AIランタイムの実動確認用モジュールです。</div><div class="taskfoot"><span class="tag">Segmentation</span><span class="tag">Local inference</span><button class="btn accent small" id="runMattingBtn" disabled>この画像で実行</button></div></div>
+            </div>
+            <div class="task current" id="samTask">
+              <div class="taskicon">◈</div>
+              <div class="taskbody">
+                <div class="taskname">オブジェクト分離 / SAM</div>
+                <div class="taskdesc">クリックで単体を指定する方法に加え、画像内を格子状に探索して複数のマスク候補を作れます。採用する候補だけを透明PNGレイヤーにします。</div>
+                <div class="taskfoot"><span class="tag">Point prompts</span><span class="tag">Instance mask</span><button class="btn small" id="loadSamBtn">SAMモデルを読み込む</button><span class="statuspill" id="samStatus">未取得</span></div>
+                <div class="prompt-tools">
+                  <button class="btn small" id="selectSamBtn" disabled>画像上で対象を選択</button>
+                  <select id="samPointType" aria-label="追加するポイントの種類" disabled><option value="1">対象点 ＋</option><option value="0">除外点 −</option></select>
+                  <span class="prompt-count" id="samPromptCount">選択点 0</span>
+                  <button class="btn small subtle" id="clearSamPointsBtn" disabled>点をクリア</button>
+                </div>
+                <div class="sam-runrow"><button class="btn accent small" id="runSamBtn" disabled>選択した対象を分離</button></div>
+                <div class="sam-note">初回は量子化モデルを取得します。画像上をクリックして対象点（＋）を1つ以上追加してください。境界が広すぎる場合は除外点（−）を追加します。</div>
+                <div class="divider"></div>
+                <div class="taskname">複数オブジェクト候補の自動生成</div>
+                <div class="sam-auto-row">
+                  <label class="switchline" for="samAutoGrid">探索密度</label>
+                  <select id="samAutoGrid" aria-label="自動探索の密度"><option value="2">2 × 2（軽量）</option><option value="3" selected>3 × 3（標準）</option><option value="4">4 × 4（高密度）</option></select>
+                  <button class="btn accent small" id="runSamAutoBtn" disabled>候補を自動生成</button>
+                </div>
+                <div class="sam-note">画像を格子状にサンプリングし、各地点からSAMのマスク候補を提案します。候補の重複や極端に大きい領域は整理しますが、背景を物体と誤認したり、小さな物体を見逃したりすることがあります。候補を確認してからレイヤーに採用してください。高密度では最大16地点を推論し、保存する候補は最大8件です。</div>
+                <div class="sam-candidate-panel hidden" id="samCandidatePanel">
+                  <div class="sam-candidate-head"><span>抽出候補 <span class="tag" id="samCandidateCount">0</span></span><div style="display:flex;gap:5px"><button class="btn small" id="samCandidateSelectAll">すべて採用</button><button class="btn small" id="samCandidateSelectNone">すべて除外</button></div></div>
+                  <div class="sam-candidate-list" id="samCandidateList"></div>
+                  <div class="sam-candidate-note">チェックした候補だけがDesign Parsingの画像レイヤーになります。各レイヤーは対象範囲に切り抜いた透明PNGとして生成され、元画像の座標情報を保持します。</div>
+                </div>
+              </div>
+            </div>
+            <div class="task current" id="ocrTask">
+              <div class="taskicon">T</div><div class="taskbody">
+                <div class="taskname">文字認識 / OCR <span class="tasktag">実行可能</span></div>
+                <div class="taskdesc">画像内の文字を行単位で検出し、テキスト・座標・信頼度を持つ編集可能なテキスト候補に変換します。</div>
+                <div class="ocr-tools">
+                  <select id="ocrLanguage" aria-label="OCR言語"><option value="jpn+eng" selected>日本語 + English</option><option value="jpn">日本語</option><option value="eng">English</option></select>
+                  <button class="btn small" id="loadOcrBtn">OCRエンジンを準備</button>
+                  <span class="statuspill" id="ocrStatus">未取得</span>
+                </div>
+                <div class="ocr-actions"><button class="btn accent small" id="runOcrBtn" disabled>文字を検出</button><label class="switchline"><input type="checkbox" id="ocrOverlayToggle" checked> 検出枠を表示</label></div>
+                <div class="ocr-note">初回はOCRライブラリと選択言語の学習データを取得します。画像自体はブラウザー内で処理します。</div>
+                <div class="divider"></div>
+                <div class="panelhead" style="margin:0 0 6px"><strong style="font-size:10px">検出したテキスト</strong><span class="tag" id="ocrCount">0 LINES</span></div>
+                <div class="ocr-lines" id="ocrLines"><div class="resultempty">まだ文字を検出していません</div></div>
+                <div class="ocr-actions"><button class="btn small" id="exportOcrSvgBtn" disabled>SVGテキストレイヤー</button><button class="btn small" id="exportOcrJsonBtn" disabled>JSONデータ</button></div>
+              </div>
+            </div>
+            <div class="task current" id="inpaintTask">
+              <div class="taskicon">▱</div><div class="taskbody">
+                <div class="taskname">背景補完 / Inpainting <span class="tasktag">実行モジュール</span></div>
+                <div class="taskdesc">ブラシ・OCR文字領域・SAMマスクで指定した部分をLaMaが周囲の情報から補完します。元画像は変更せず、結果を新しい画像として保存します。</div>
+                <div class="taskfoot"><span class="tag">LaMa / Big-LAMA</span><span class="tag">ONNX Runtime Web</span><button class="btn small" id="loadInpaintBtn">LaMaモデルを読み込む</button><span class="statuspill" id="inpaintStatus">未取得</span></div>
+                <div class="inpaint-tools">
+                  <div class="inpaint-row">
+                    <button class="btn small" id="toggleMaskPaintBtn" disabled>マスクを塗る</button>
+                    <select id="maskPaintMode" aria-label="マスク操作"><option value="paint">追加（塗る）</option><option value="erase">消去</option></select>
+                    <button class="btn small subtle" id="clearInpaintMaskBtn" disabled>マスクをクリア</button>
+                  </div>
+                  <div class="inpaint-control"><div><label for="maskBrushSize">ブラシサイズ（元画像px）</label><input type="range" id="maskBrushSize" min="4" max="180" step="2" value="36"></div><output id="maskBrushValue">36 px</output></div>
+                  <div class="inpaint-row">
+                    <button class="btn small" id="maskFromOcrBtn" disabled>OCR文字領域をマスク化</button>
+                    <button class="btn small" id="maskFromSamBtn" disabled>SAMマスクを利用</button>
+                  </div>
+                  <div class="inpaint-control"><div><label for="ocrMaskPadding">OCR領域の余白</label><input type="range" id="ocrMaskPadding" min="0" max="48" step="2" value="12"></div><output id="ocrMaskPaddingValue">12 px</output></div>
+                  <div class="inpaint-row">
+                    <label class="switchline"><input type="checkbox" id="inpaintMaskOverlay" checked> 赤色でマスクを表示</label>
+                    <span class="inpaint-mask-pill" id="inpaintMaskCount">マスクなし</span>
+                  </div>
+                  <div class="inpaint-control"><div><label for="inpaintQuality">処理解像度</label><select id="inpaintQuality"><option value="768">速度優先（最大768px）</option><option value="1024" selected>標準（最大1024px）</option><option value="1536">高精細（最大1536px）</option><option value="2048">最高（最大2048px）</option></select></div><output>8px単位</output></div>
+                  <div class="inpaint-control"><div><label for="maskGrowRadius">マスク境界の拡張（元画像px）</label><input type="range" id="maskGrowRadius" min="0" max="12" step="1" value="3"></div><output id="maskGrowValue">3 px</output></div>
+                  <div class="inpaint-row"><button class="btn accent small" id="runInpaintBtn" disabled>マスクした領域を補完</button><button class="btn small" id="exportInpaintMaskBtn" disabled>マスクPNG</button></div>
+                  <div class="inpaint-statusnote">モデルは初回に約102.5MBをダウンロードします。画像はブラウザー内のONNX Runtime WASMで処理します。処理解像度は端末負荷に応じて選択してください。ブラシを有効にしてプレビュー上をなぞると、補完範囲を指定できます。</div>
+                </div>
+              </div>
+            </div>
+            <div class="task current" id="designParsingTask">
+              <div class="taskicon">⌗</div><div class="taskbody">
+                <div class="taskname">デザイン構造解析 / Design Parsing <span class="tasktag">統合モジュール</span></div>
+                <div class="taskdesc">OCR・SAM・MODNetなど既存モジュールの結果を統合し、意味・座標・階層・重なり順を持つ編集可能なレイヤー候補へ変換します。現段階は検出結果の融合と幾何ルールによる推定で、画像全体を理解する単一の万能AIモデルではありません。</div>
+                <div class="design-parse">
+                  <div class="design-source-grid">
+                    <div class="design-source"><strong>OCR / テキスト</strong><span id="designOcrSource">未実行</span></div>
+                    <div class="design-source"><strong>SAM / オブジェクト</strong><span id="designSamSource">未実行</span></div>
+                    <div class="design-source"><strong>MODNet / 前景</strong><span id="designMatteSource">未実行</span></div>
+                  </div>
+                  <div class="design-parse-toolbar">
+                    <button class="btn accent small" id="runDesignParseBtn" disabled>レイアウトを解析</button>
+                    <button class="btn small" id="exportDesignJsonBtn" disabled>レイヤー構造JSON</button>
+                    <button class="btn small subtle" id="clearDesignParseBtn" disabled>解析をクリア</button>
+                    <label class="switchline"><input type="checkbox" id="designOverlayToggle" checked> 検出枠を表示</label>
+                  </div>
+                  <div class="design-summary">
+                    <div class="design-stat"><b id="designLayerStat">0</b><span>レイヤー候補</span></div>
+                    <div class="design-stat"><b id="designTextStat">0</b><span>テキスト</span></div>
+                    <div class="design-stat"><b id="designObjectStat">0</b><span>画像・物体</span></div>
+                    <div class="design-stat"><b id="designGroupStat">0</b><span>グループ</span></div>
+                  </div>
+                  <div class="design-overlay-legend"><span><i class="design-legend-dot" style="background:#4f7ec4"></i>テキスト</span><span><i class="design-legend-dot" style="background:#d28b43"></i>画像・物体</span><span><i class="design-legend-dot" style="background:#6b9d76"></i>背景</span></div>
+                  <div class="design-tree" id="designTree"><div class="design-empty">画像を読み込み、OCR・SAM・MODNetなど必要な解析を実行してから「レイアウトを解析」を押してください。検出結果がない場合は、元画像の参照レイヤーのみ作成します。</div></div>
+                  <div class="design-properties hidden" id="designProperties">
+                    <div class="design-properties-head"><span>選択レイヤーのプロパティ</span><span class="tag" id="designSelectedType">—</span></div>
+                    <div class="design-geometry-grid">
+                      <label class="design-property-field">X<input id="designPropX" type="number" step="1"></label>
+                      <label class="design-property-field">Y<input id="designPropY" type="number" step="1"></label>
+                      <label class="design-property-field">幅<input id="designPropW" type="number" min="1" step="1"></label>
+                      <label class="design-property-field">高さ<input id="designPropH" type="number" min="1" step="1"></label>
+                      <label class="design-property-field full" id="designTextPropWrap">テキスト内容<input id="designPropText" type="text"></label>
+                    </div>
+                    <div class="tiny">座標は元画像の左上を原点としたpx単位です。ここでの変更はレイヤー構造JSONに反映されます。</div>
+                  </div>
+                  <section class="composition-panel" id="compositionPanel" aria-labelledby="compositionTitle">
+                    <div class="composition-head">
+                      <div><strong id="compositionTitle">レイヤー再合成プレビュー</strong><div class="composition-subtitle">抽出した画像・OCRテキストを、元画像上の座標と重なり順で再配置します。</div></div>
+                      <span class="tag" id="compositionStatusTag">未作成</span>
+                    </div>
+                    <div class="composition-controls">
+                      <label class="composition-field">背景
+                        <select id="compositionBase">
+                          <option value="original">元画像（参照用）</option>
+                          <option value="inpaint" disabled>補完した背景</option>
+                          <option value="transparent">透明背景</option>
+                        </select>
+                      </label>
+                      <label class="composition-field">表示
+                        <select id="compositionMode">
+                          <option value="composite">合成プレビュー</option>
+                          <option value="compare">元画像と比較</option>
+                        </select>
+                      </label>
+                      <button class="btn small" id="renderCompositionBtn" disabled>プレビュー更新</button>
+                      <button class="btn accent small" id="exportCompositionBtn" disabled>合成PNGを書き出す</button>
+                    </div>
+                    <div class="composition-compare-control hidden" id="compositionCompareControl">
+                      <span>元画像</span><input id="compositionDivider" type="range" min="5" max="95" value="50" aria-label="比較位置"><span>再合成</span><output id="compositionDividerValue">50%</output>
+                    </div>
+                    <div class="composition-canvas-wrap checkerboard" id="compositionCanvasWrap">
+                      <canvas id="compositionCanvas" aria-label="レイヤー再合成プレビュー"></canvas>
+                      <div class="composition-empty" id="compositionEmpty">画像を読み込み、レイアウトを解析すると再合成プレビューが表示されます。</div>
+                    </div>
+                    <div class="composition-foot" id="compositionFoot">背景補完を行うと、切り抜いた元の物体が背景側に残らない状態で比較できます。透明背景は抽出したレイヤーだけを確認するのに適しています。</div>
+                  </section>
+                  <div class="design-warning" id="designParseWarning">注意：文字の分類・グループ化・前後関係は現段階ではOCR/SAMの座標と簡易ルールによる推定です。元画像から隠れた背景を復元したり、未検出のオブジェクトを自動生成したりはしません。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="rightstack">
+        <section class="panel" id="runtimePanel">
+          <div class="panelhead"><div><div class="paneltitle">実行環境</div><div class="paneldesc">ブラウザーのAI実行能力を検査します。</div></div><span class="statuspill" id="runtimePill">未診断</span></div>
+          <div class="enginecard">
+            <div class="enginehead"><strong>Runtime bootstrap</strong><span class="tag">Worker + ONNX</span></div>
+            <div class="diaggrid">
+              <div class="diag"><div class="diaglabel">Web Worker</div><div class="diagvalue" id="diagWorker">未確認</div></div>
+              <div class="diag"><div class="diaglabel">WebGPU</div><div class="diagvalue" id="diagGpu">未確認</div></div>
+              <div class="diag"><div class="diaglabel">WebAssembly</div><div class="diagvalue" id="diagWasm">未確認</div></div>
+              <div class="diag"><div class="diaglabel">OffscreenCanvas</div><div class="diagvalue" id="diagCanvas">未確認</div></div>
+              <div class="diag"><div class="diaglabel">メモリ目安</div><div class="diagvalue" id="diagMemory">取得不可</div></div>
+              <div class="diag"><div class="diaglabel">同時スレッド</div><div class="diagvalue" id="diagCores">取得不可</div></div>
+            </div>
+            <div class="field"><label for="backendSelect">推論バックエンド</label><select id="backendSelect"><option value="auto">自動（GPU優先・CPU代替）</option><option value="webgpu">WebGPUを指定</option><option value="wasm">WASM / CPUを指定</option></select></div>
+            <div class="field"><label for="precisionSelect">モデル精度</label><select id="precisionSelect"><option value="q8">量子化 INT8相当（軽量）</option><option value="fp32">FP32（標準）</option></select></div>
+            <div class="field"><button class="btn" id="runtimeTestBtn">環境診断を実行</button></div>
+          </div>
+          <div class="divider"></div>
+          <div class="enginehead"><strong>AIライブラリ</strong><span class="statuspill" id="libraryPill">未読込</span></div>
+          <div class="tiny" style="margin-top:6px">Transformers.js 3.8.1 / ONNX Runtime Web。モデルごとの実行器をWorker内で管理します。</div>
+          <div style="margin-top:10px;display:flex;gap:7px"><button class="btn primary" id="loadLibraryBtn" style="flex:1">ライブラリを読み込む</button><button class="btn icon" id="stopWorkerBtn" title="Workerを終了">■</button></div>
+        </section>
+
+        <section class="panel" id="modelPanel">
+          <div class="panelhead"><div><div class="paneltitle">モデル管理</div><div class="paneldesc">モデルは必要になった時点で取得し、ブラウザー側にキャッシュします。</div></div><span class="tag">MODEL REGISTRY</span></div>
+          <div class="modelrow"><div><strong>MODNet</strong><p>Xenova/modnet<br>前景マット・背景除去 / Apache-2.0</p></div><span class="statuspill" id="modnetStatus">未取得</span></div>
+          <div class="modelrow"><div><strong>SLIM-SAM 77 / Quantized</strong><p>Xenova/slimsam-77-uniform<br>クリック式マスク生成 / Apache-2.0<br>量子化重み合計 約14MB（目安）</p></div><span class="statuspill" id="samModelRegistryStatus">未取得</span></div>
+          <div class="modelrow"><div><strong>Tesseract.js 7 / OCR</strong><p>日本語・英語の文字認識 / 行単位の座標・信頼度取得</p></div><span class="statuspill" id="ocrModelRegistryStatus">未取得</span></div>
+          <div class="modelrow"><div><strong>LaMa / Big-LAMA ONNX</strong><p>AUXOUT-TEAM/agit-lama-inpainting<br>約102.5MB / Apache-2.0 / 動的8px単位</p></div><span class="statuspill" id="inpaintModelRegistryStatus">未取得</span></div>
+          <div class="notice" style="margin-top:9px">モデル本体はHTMLに含まれません。初回実行時に配布元から取得します。画像ファイルはローカルWorker内で処理し、サーバーへアップロードしません。SLIM-SAMはクリック位置を手掛かりに対象マスクを提案する軽量モデルです。OCRはテキスト候補と座標を出力できます。文字のフォント・装飾の完全復元、デザイン全体の自動レイヤー分離はまだ行いません。背景補完はLaMaで別タスクとして実行します。</div>
+        </section>
+
+        <section class="panel">
+          <div class="panelhead"><div><div class="paneltitle">生成結果</div><div class="paneldesc">AI処理で作成された画像・マスク・レイヤーデータ。</div></div><span class="tag" id="resultCount">0 ITEMS</span></div>
+          <div class="resultlist" id="resultList"><div class="resultempty">まだ生成結果はありません</div></div>
+          <div class="divider"></div>
+          <div class="panelhead" style="margin-bottom:8px"><div class="paneltitle">処理ログ</div><button class="btn small" id="clearLogBtn">クリア</button></div>
+          <div class="log" id="log" aria-live="polite"><div class="logline"><span class="logtime">[SYSTEM]</span> AI workbench ready.</div><div class="logline">画像入力と実行環境の診断を開始できます。</div></div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="toast hidden" id="toast"></div>
+<div class="modalback" id="ocrLicenseModal"><div class="modal"><h3>OCRエンジンの準備</h3><p>Tesseract.jsを使用して、選択した画像の文字をブラウザー内で認識します。初回はOCRライブラリ、OCR実行用Worker、および選択言語の学習データをCDNから取得します。</p><p>画像ファイル自体はOCR処理用Workerへ渡され、認識サーバーへアップロードしません。認識結果は文字列・座標・信頼度として保持します。フォントや装飾の完全復元を保証するものではありません。</p><div class="modalactions"><button class="btn" id="cancelOcrLoad">キャンセル</button><button class="btn primary" id="confirmOcrLoad">準備する</button></div></div></div>
+
+<div class="modalback" id="licenseModal"><div class="modal"><h3>モデル利用上の確認</h3><p>MODNet（Xenova/modnet）はモデルカード上でApache-2.0として公開されています。モデル本体は初回実行時にHugging Faceから取得します。取得したモデルファイルのライセンスと配布条件は、利用・再配布の前に配布元で再確認してください。</p><p>この処理では、選択した画像を外部サーバーへ送らず、ブラウザー内で推論します。ライブラリとモデルファイルのダウンロード通信は発生します。</p><div class="modalactions"><button class="btn" id="cancelLicense">キャンセル</button><button class="btn primary" id="confirmLicense">同意して実行</button></div></div></div>
+<div class="modalback" id="samLicenseModal"><div class="modal"><h3>SAMモデルの取得</h3><p>Xenova/slimsam-77-uniformはHugging Face上でApache-2.0として公開されているTransformers.js向けモデルです。量子化ONNX重みは合計約14MBが目安ですが、設定・ライブラリの追加取得が発生する場合があります。</p><p>モデルファイルはHugging Faceからダウンロードされます。選択画像とクリック位置はローカルWorkerで処理し、画像データを推論サーバーへ送信しません。利用・再配布前には配布元のライセンス表示を再確認してください。</p><div class="modalactions"><button class="btn" id="cancelSamLoad">キャンセル</button><button class="btn primary" id="confirmSamLoad">モデルを読み込む</button></div></div></div>
+<div class="modalback" id="inpaintLicenseModal"><div class="modal"><h3>LaMa背景補完モデルの取得</h3><p>Apache-2.0で公開されたBig-LAMAのONNXモデルを読み込みます。モデルファイルは約102.5MBです。初回のみダウンロードが発生し、ブラウザーのHTTPキャッシュが利用される場合があります。</p><p>画像とマスクはローカルのWeb Worker内で処理し、推論サーバーへ送信しません。モデルの配布元とライセンス表記は利用時点で再確認してください。処理はWASM/CPUで実行し、画像の長辺を選択した解像度に縮小してから補完します。</p><div class="modalactions"><button class="btn" id="cancelInpaintLoad">キャンセル</button><button class="btn primary" id="confirmInpaintLoad">モデルを取得</button></div></div></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const state={file:null,imageUrl:null,imageBitmap:null,width:0,height:0,worker:null,workerUrl:null,workerReady:false,libraryReady:false,modelReady:false,samReady:false,samLoading:false,samPoints:[],samSelectMode:false,samPointType:1,ocrWorker:null,ocrReady:false,ocrLoading:false,ocrLines:[],ocrOverlayVisible:true,ocrBusy:false,inpaintReady:false,inpaintLoading:false,inpaintPaintMode:false,inpaintMaskCanvas:null,inpaintMaskHasContent:false,inpaintMaskVisible:true,inpaintMaskMode:'paint',inpaintBrushSize:36,lastSamMask:null,jobRunning:false,outputUrl:null,outputBlob:null,view:'input',results:[],jobId:0,workerPending:new Map(),diagnosed:false,designLayers:[],designGroups:[],designParsed:false,designSelectedId:null,designOverlayVisible:true,lastSamCutoutBlob:null,lastSamCutoutGeometry:null,lastMattingBlob:null,lastInpaintBlob:null,samCandidates:[],samAutoRunning:false,compositionBaseMode:'original',compositionMode:'composite',compositionDivider:50,compositionAssetCache:new Map(),compositionRenderToken:0,compositionMissingAssets:[]};
+const CDN='https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1';
+const MODEL='Xenova/modnet';
+function log(message,type='INFO'){const el=document.createElement('div');el.className='logline';const t=new Date().toLocaleTimeString('ja-JP',{hour12:false});el.innerHTML=`<span class="logtime">[${t} ${type}]</span> `;el.append(document.createTextNode(String(message)));$('log').append(el);$('log').scrollTop=$('log').scrollHeight;}
+function toast(message){const el=$('toast');el.textContent=message;el.classList.remove('hidden');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.add('hidden'),2600)}
+function setHeader(text,good=false){$('headerState').textContent=text;$('headerDot').className='dot'+(good?' good':'')}
+function setPill(id,text,kind=''){const e=$(id);e.textContent=text;e.className='statuspill'+(kind?' '+kind:'')}
+function fmtBytes(n){if(n<1024)return n+' B';if(n<1024*1024)return (n/1024).toFixed(1)+' KB';return (n/1024/1024).toFixed(1)+' MB'}
+function diagnose(){const worker=typeof Worker!=='undefined',gpu=!!navigator.gpu,wasm=typeof WebAssembly==='object',off=typeof OffscreenCanvas!=='undefined';$('diagWorker').textContent=worker?'利用可':'利用不可';$('diagGpu').textContent=gpu?'APIあり':'APIなし';$('diagWasm').textContent=wasm?'利用可':'利用不可';$('diagCanvas').textContent=off?'利用可':'利用不可';$('diagMemory').textContent=navigator.deviceMemory?`${navigator.deviceMemory} GB目安`:'取得不可';$('diagCores').textContent=navigator.hardwareConcurrency?`${navigator.hardwareConcurrency} logical`:'取得不可';$('diagWorker').style.color=worker?'var(--good)':'var(--bad)';$('diagGpu').style.color=gpu?'var(--good)':'var(--warn)';$('diagWasm').style.color=wasm?'var(--good)':'var(--bad)';$('diagCanvas').style.color=off?'var(--good)':'var(--warn)';state.diagnosed=true;setPill('runtimePill',gpu?'GPU利用候補':'CPU実行候補',gpu?'good':'warn');log(`環境診断: Worker=${worker}, WebGPU=${gpu}, WASM=${wasm}, OffscreenCanvas=${off}, secureContext=${isSecureContext}`);return{worker,gpu,wasm,off};}
+function makeWorker(){if(state.worker){state.worker.terminate();state.worker=null}const src=`
+let transformers=null;const pipelines=new Map();let samModel=null;let samProcessor=null;let ortRuntime=null;let inpaintSession=null;
+const CDN='${CDN}';const SAM_MODEL='Xenova/slimsam-77-uniform';const ORT_URL='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.1/dist/ort.wasm.min.mjs';const ORT_WASM_PATH='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.1/dist/';const INPAINT_MODEL_URL='https://huggingface.co/AUXOUT-TEAM/agit-lama-inpainting/resolve/main/lama_fp16w.onnx';
+function send(type,jobId,data={}){self.postMessage({type,jobId,...data})}
+async function readSamImage(blob){
+ if(!blob||typeof blob!=='object'||typeof blob.size!=='number')throw new Error('Workerに有効な画像Blobが届いていません');
+ try{
+  // Transformers.js 3.8.1 supports Blob directly. Avoid worker-local blob: URLs,
+  // which can fail to resolve in some iOS/Safari worker contexts.
+  return await transformers.RawImage.read(blob);
+ }catch(blobError){
+  if(typeof createImageBitmap!=='function'||typeof OffscreenCanvas==='undefined'){
+   throw new Error('Blob画像の直接デコードに失敗しました: '+(blobError?.message||String(blobError)));
+  }
+  let bitmap=null;
+  try{
+   bitmap=await createImageBitmap(blob);
+   const canvas=new OffscreenCanvas(bitmap.width,bitmap.height);
+   const context=canvas.getContext('2d',{willReadFrequently:true});
+   if(!context)throw new Error('OffscreenCanvasの2Dコンテキストを取得できません');
+   context.drawImage(bitmap,0,0);
+   return await transformers.RawImage.read(canvas);
+  }catch(bitmapError){
+   throw new Error('画像デコードに失敗しました。Blob: '+(blobError?.message||String(blobError))+' / ImageBitmap: '+(bitmapError?.message||String(bitmapError)));
+  }finally{if(bitmap&&typeof bitmap.close==='function')bitmap.close()}
+ }
+}
+self.onmessage=async e=>{const m=e.data||{};try{
+ if(m.type==='PING'){send('PONG',m.jobId,{ok:true});return}
+ if(m.type==='LOAD_LIBRARY'){
+  send('STATUS',m.jobId,{message:'Transformers.jsを読み込んでいます…'});
+  transformers=await import(CDN);
+  transformers.env.allowLocalModels=false;
+  transformers.env.useBrowserCache=true;
+  if(transformers.env.backends?.onnx?.wasm){transformers.env.backends.onnx.wasm.numThreads=self.crossOriginIsolated?Math.max(1,Math.min(4,(self.navigator?.hardwareConcurrency||2)-1)):1;}
+  send('LIBRARY_READY',m.jobId,{version:'3.8.1'});return;
+ }
+ if(m.type==='RUN_MODNET'){
+  if(!transformers)throw new Error('AIライブラリが初期化されていません');
+  const key='modnet:'+m.backend+':'+m.dtype;let pipe=pipelines.get(key);
+  const progress_callback=p=>{const status=p?.status||'loading';let message=p?.file||p?.name||status;if(p?.progress!=null)message+=' '+Math.round(p.progress)+'%';send('PROGRESS',m.jobId,{status,message,progress:p?.progress??null});};
+  if(!pipe){
+   send('STATUS',m.jobId,{message:'MODNetモデルを準備しています…'});
+   const opts={dtype:m.dtype,progress_callback};
+   if(m.backend==='webgpu')opts.device='webgpu';
+   pipe=await transformers.pipeline('background-removal','Xenova/modnet',opts);
+   pipelines.set(key,pipe);
+  }
+  const url=URL.createObjectURL(m.blob);
+  try{
+   send('STATUS',m.jobId,{message:'画像を推論しています…'});
+   let output=await pipe(url);
+   if(!output||!output.length)throw new Error('モデルから出力がありません');
+   let result=output[0];let blob=await result.toBlob();
+   send('RESULT',m.jobId,{blob,width:result.width,height:result.height,channels:result.channels||4});
+  }finally{URL.revokeObjectURL(url)}
+  return;
+ }
+ if(m.type==='LOAD_SAM'){
+  if(!transformers)throw new Error('先にAIライブラリを初期化してください');
+  if(!transformers.SamModel||!transformers.AutoProcessor||!transformers.RawImage)throw new Error('このTransformers.jsビルドにSAMの必要クラスがありません');
+  if(!samModel||!samProcessor){
+   const progress_callback=p=>{const status=p?.status||'loading';let message=p?.file||p?.name||('SAM '+status);if(p?.progress!=null)message+=' '+Math.round(p.progress)+'%';send('PROGRESS',m.jobId,{status,message,progress:p?.progress??null});};
+   send('STATUS',m.jobId,{message:'SLIM-SAMの画像プロセッサーを取得しています…'});
+   samProcessor=await transformers.AutoProcessor.from_pretrained(SAM_MODEL,{progress_callback});
+   send('STATUS',m.jobId,{message:'SLIM-SAM量子化モデルを取得しています…'});
+   const opts={dtype:m.dtype||'q8',progress_callback};if(m.backend==='webgpu')opts.device='webgpu';
+   samModel=await transformers.SamModel.from_pretrained(SAM_MODEL,opts);
+  }
+  send('SAM_READY',m.jobId,{model:SAM_MODEL,dtype:m.dtype||'q8'});return;
+ }
+ if(m.type==='RUN_SAM_POINT'){
+  if(!samModel||!samProcessor)throw new Error('SAMモデルが読み込まれていません');
+  if(!Array.isArray(m.points)||!m.points.some(p=>Number(p.label)===1))throw new Error('対象点（＋）を1つ以上指定してください');
+  try{
+   send('STATUS',m.jobId,{message:'画像BlobをSAM用にデコードしています…'});
+   const raw=await readSamImage(m.blob);
+   const input_points=[m.points.map(p=>[Number(p.x),Number(p.y)])];
+   const input_labels=[m.points.map(p=>Number(p.label)===1?1:0)];
+   const inputs=await samProcessor(raw,{input_points,input_labels});
+   send('STATUS',m.jobId,{message:'SAMが対象マスクを推論しています…'});
+   const outputs=await samModel(inputs);
+   const masks=await samProcessor.post_process_masks(outputs.pred_masks,inputs.original_sizes,inputs.reshaped_input_sizes);
+   if(!masks||!masks.length)throw new Error('SAMからマスクが返されませんでした');
+   const tensor=masks[0];const dims=tensor.dims||[];const maskHeight=dims[dims.length-2],maskWidth=dims[dims.length-1];
+   if(!maskWidth||!maskHeight)throw new Error('SAMマスクのサイズを取得できません');
+   const planeSize=maskWidth*maskHeight;const maskCount=dims.length>=3?dims[dims.length-3]:1;
+   const scores=Array.from(outputs.iou_scores?.data||[]);let bestIndex=0;let bestScore=-Infinity;
+   for(let i=0;i<Math.min(maskCount,scores.length||1);i++){const score=scores[i]??0;if(score>bestScore){bestScore=score;bestIndex=i}}
+   const offset=bestIndex*planeSize;const source=tensor.data;
+   if(!source||source.length<offset+planeSize)throw new Error('SAMマスクデータの形状が想定と異なります');
+   const mask=new Uint8Array(planeSize);for(let i=0;i<planeSize;i++)mask[i]=source[offset+i]>0?255:0;
+   self.postMessage({type:'SAM_MASK',jobId:m.jobId,maskBuffer:mask.buffer,width:maskWidth,height:maskHeight,score:Number.isFinite(bestScore)?bestScore:null,maskCount},[mask.buffer]);
+  }catch(err){throw new Error('SAM手動選択処理: '+(err?.message||String(err)))}
+  return;
+ }
+ if(m.type==='RUN_SAM_GRID'){
+  if(!samModel||!samProcessor)throw new Error('SAMモデルが読み込まれていません');
+  if(!Array.isArray(m.points)||!m.points.length||m.points.length>20)throw new Error('探索地点の数が不正です（1〜20点）');
+  const candidates=[];
+  try{
+   send('STATUS',m.jobId,{message:'自動候補用に画像Blobをデコードしています…'});
+   const raw=await readSamImage(m.blob);
+   for(let index=0;index<m.points.length;index++){
+    const point=m.points[index];
+    send('STATUS',m.jobId,{message:'SAM候補を探索しています… '+(index+1)+'/'+m.points.length});
+    const inputs=await samProcessor(raw,{input_points:[[[Number(point.x),Number(point.y)]]],input_labels:[[1]]});
+    const outputs=await samModel(inputs);
+    const masks=await samProcessor.post_process_masks(outputs.pred_masks,inputs.original_sizes,inputs.reshaped_input_sizes);
+    if(!masks||!masks.length)continue;
+    const tensor=masks[0],dims=tensor.dims||[],maskHeight=dims[dims.length-2],maskWidth=dims[dims.length-1];
+    if(!maskWidth||!maskHeight)continue;
+    const planeSize=maskWidth*maskHeight,maskCount=dims.length>=3?dims[dims.length-3]:1,scores=Array.from(outputs.iou_scores?.data||[]);
+    let bestIndex=0,bestScore=-Infinity;
+    for(let i=0;i<Math.min(maskCount,scores.length||1);i++){const score=scores[i]??0;if(score>bestScore){bestScore=score;bestIndex=i}}
+    const offset=bestIndex*planeSize,source=tensor.data;if(!source||source.length<offset+planeSize)continue;
+    const mask=new Uint8Array(planeSize);for(let i=0;i<planeSize;i++)mask[i]=source[offset+i]>0?255:0;
+    candidates.push({maskBuffer:mask.buffer,width:maskWidth,height:maskHeight,score:Number.isFinite(bestScore)?bestScore:null,x:Number(point.x),y:Number(point.y)});
+   }
+   const transfer=candidates.map(x=>x.maskBuffer);
+   self.postMessage({type:'SAM_MASKS',jobId:m.jobId,candidates},transfer);
+  }catch(err){throw new Error('SAM自動候補処理: '+(err?.message||String(err)))}
+  return;
+ }
+ if(m.type==='LOAD_INPAINT'){
+  if(!ortRuntime){
+   send('STATUS',m.jobId,{message:'ONNX Runtime Web（WASM）を読み込んでいます…'});
+   ortRuntime=await import(ORT_URL);
+   ortRuntime.env.wasm.wasmPaths=ORT_WASM_PATH;
+   ortRuntime.env.wasm.numThreads=self.crossOriginIsolated?Math.max(1,Math.min(4,(self.navigator?.hardwareConcurrency||2)-1)):1;
+   ortRuntime.env.logLevel='warning';
+  }
+  if(!inpaintSession){
+   send('STATUS',m.jobId,{message:'LaMaモデル（約102.5MB）を取得しています…'});
+   const response=await fetch(INPAINT_MODEL_URL,{mode:'cors',cache:'force-cache'});
+   if(!response.ok)throw new Error('LaMaモデルの取得に失敗しました（HTTP '+response.status+'）');
+   let modelBuffer;
+   if(response.body&&response.body.getReader){
+    const reader=response.body.getReader(),chunks=[];let received=0;const total=Number(response.headers.get('content-length'))||0;
+    while(true){const part=await reader.read();if(part.done)break;chunks.push(part.value);received+=part.value.byteLength;if(total)send('PROGRESS',m.jobId,{message:'LaMaモデル '+Math.round(received/total*100)+'%',progress:received/total*100})}
+    const joined=new Uint8Array(received);let offset=0;for(const chunk of chunks){joined.set(chunk,offset);offset+=chunk.byteLength}modelBuffer=joined.buffer;
+   }else modelBuffer=await response.arrayBuffer();
+   send('STATUS',m.jobId,{message:'LaMa ONNXセッションを初期化しています…'});
+   inpaintSession=await ortRuntime.InferenceSession.create(modelBuffer,{executionProviders:['wasm'],graphOptimizationLevel:'all'});
+   const names=inpaintSession.inputNames||[];
+   if(!names.includes('image')||!names.includes('mask'))throw new Error('LaMaモデルの入力名が想定と異なります: '+names.join(', '));
+  }
+  send('INPAINT_READY',m.jobId,{model:'AUXOUT-TEAM/agit-lama-inpainting',inputs:inpaintSession.inputNames,outputs:inpaintSession.outputNames});return;
+ }
+ if(m.type==='RUN_INPAINT'){
+  if(!inpaintSession||!ortRuntime)throw new Error('先にLaMaモデルを読み込んでください');
+  const w=Number(m.width),h=Number(m.height),count=w*h;
+  if(!w||!h||w%8||h%8||w>4096||h>4096)throw new Error('入力サイズは8の倍数かつ4096px以下にしてください');
+  const rgba=new Uint8Array(m.imageBuffer),maskBytes=new Uint8Array(m.maskBuffer);
+  if(rgba.length!==count*4||maskBytes.length!==count)throw new Error('画像・マスクの入力サイズが一致しません');
+  send('STATUS',m.jobId,{message:'画像とマスクをLaMa入力テンソルへ変換しています…'});
+  const imageTensorData=new Float32Array(count*3),maskTensorData=new Float32Array(count);
+  const plane=count;
+  for(let i=0;i<count;i++){const p=i*4;imageTensorData[i]=rgba[p]/255;imageTensorData[plane+i]=rgba[p+1]/255;imageTensorData[plane*2+i]=rgba[p+2]/255;maskTensorData[i]=maskBytes[i]>0?1:0}
+  const feeds={image:new ortRuntime.Tensor('float32',imageTensorData,[1,3,h,w]),mask:new ortRuntime.Tensor('float32',maskTensorData,[1,1,h,w])};
+  send('STATUS',m.jobId,{message:'LaMaが背景を補完しています…'});
+  const outputs=await inpaintSession.run(feeds);
+  const outputName=(inpaintSession.outputNames||[]).includes('output')?'output':(inpaintSession.outputNames||[])[0];
+  const tensor=outputs[outputName];if(!tensor||!tensor.data||tensor.data.length!==count*3)throw new Error('LaMaの出力テンソル形状が想定と異なります');
+  const output=new Float32Array(tensor.data);
+  self.postMessage({type:'INPAINT_RESULT',jobId:m.jobId,outputBuffer:output.buffer,width:w,height:h},[output.buffer]);return;
+ }
+ if(m.type==='STOP'){pipelines.clear();samModel=null;samProcessor=null;send('STOPPED',m.jobId);return}
+ }catch(err){send('ERROR',m.jobId,{error:err?.message||String(err),stack:err?.stack||''})}}
+`;
+const blob=new Blob([src],{type:'text/javascript'});state.workerUrl=URL.createObjectURL(blob);state.worker=new Worker(state.workerUrl,{type:'module'});state.worker.onmessage=onWorkerMessage;state.worker.onerror=e=>{const err=new Error('Worker error: '+(e.message||'unknown'));log(err.message,'ERROR');setHeader('Workerエラー',false);for(const [id,p] of state.workerPending){clearTimeout(p.timer);p.reject(err)}state.workerPending.clear();state.worker?.terminate();state.worker=null;state.libraryReady=false;state.samReady=false;state.samLoading=false;state.inpaintReady=false;state.inpaintLoading=false;updateSamControls();updateInpaintControls();setPill('inpaintStatus','停止','warn');setPill('inpaintModelRegistryStatus','停止','warn');setPill('samStatus','停止','warn');setPill('samModelRegistryStatus','未取得','warn');setPill('libraryPill','Workerエラー','bad');$('loadLibraryBtn').disabled=false;$('loadLibraryBtn').textContent='再試行';$('runMattingBtn').disabled=true};return state.worker;}
+function requestWorker(type,data={},timeout=120000,transfer=[]){if(!state.worker)return Promise.reject(new Error('Workerが起動していません'));const jobId=++state.jobId;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{state.workerPending.delete(jobId);reject(new Error('Worker応答がタイムアウトしました'))},timeout);state.workerPending.set(jobId,{resolve,reject,timer,type});state.worker.postMessage({type,jobId,...data},transfer)})}
+function onWorkerMessage(e){const m=e.data||{};if(m.type==='PROGRESS'||m.type==='STATUS'){if(m.type==='STATUS')log(m.message||'処理中…');else{const txt=m.message||m.status||'loading';log(txt,'MODEL');if(m.progress!=null){$('progressWrap').classList.remove('hidden');$('progressBar').style.width=Math.max(0,Math.min(100,m.progress))+'%'}}return}
+const p=state.workerPending.get(m.jobId);if(!p){if(m.type==='ERROR')log(m.error,'ERROR');return}if(m.type==='ERROR'){clearTimeout(p.timer);state.workerPending.delete(m.jobId);p.reject(new Error(m.error));return}if(['PONG','LIBRARY_READY','RESULT','SAM_READY','SAM_MASK','SAM_MASKS','INPAINT_READY','INPAINT_RESULT','STOPPED'].includes(m.type)){clearTimeout(p.timer);state.workerPending.delete(m.jobId);p.resolve(m)}}
+async function ensureWorker(){if(state.worker)return;makeWorker();await requestWorker('PING',{},10000);log('Web Worker応答確認済み')}
+async function loadLibrary(){if(state.libraryReady)return; $('loadLibraryBtn').disabled=true;$('loadLibraryBtn').textContent='読み込み中…';try{await ensureWorker();const r=await requestWorker('LOAD_LIBRARY',{},90000);state.libraryReady=true;setPill('libraryPill','読込済み','good');$('loadLibraryBtn').textContent='ライブラリ読込済み';$('loadLibraryBtn').disabled=true;setHeader('AI基盤準備完了',true);log('Transformers.js '+r.version+' 初期化完了');toast('AIライブラリを初期化しました')}catch(err){$('loadLibraryBtn').disabled=false;$('loadLibraryBtn').textContent='再試行';setPill('libraryPill','読込失敗','bad');log(err.message,'ERROR');toast('ライブラリの読み込みに失敗しました')}}
+function setImage(file){if(!file)return;if(!/^image\/(png|jpeg|webp)$/.test(file.type)){toast('PNG・JPEG・WebP画像を選択してください');return}if(file.size>60*1024*1024){toast('60MB以下の画像を選択してください');return}if(state.imageUrl)URL.revokeObjectURL(state.imageUrl);state.file=file;clearCompositionAssetCache();state.compositionBaseMode='original';if($('compositionBase'))$('compositionBase').value='original';state.compositionDivider=50;state.samPoints=[];state.samSelectMode=false;clearSamCandidates();state.lastSamMask=null;state.lastSamCutoutBlob=null;state.lastSamCutoutGeometry=null;state.lastMattingBlob=null;state.lastInpaintBlob=null;resetDesignParsing();state.inpaintPaintMode=false;state.inpaintMaskHasContent=false;state.inpaintMaskCanvas=document.createElement('canvas');state.inpaintMaskCanvas.width=0;state.inpaintMaskCanvas.height=0;resetOcrResults();updateSamControls();updateInpaintControls();state.imageUrl=URL.createObjectURL(file);state.outputBlob=null;if(state.outputUrl){URL.revokeObjectURL(state.outputUrl);state.outputUrl=null}const img=$('previewImage');img.src=state.imageUrl;img.classList.remove('hidden');$('previewBox').classList.remove('empty');$('fileMeta').classList.remove('hidden');$('fileName').textContent=file.name;$('fileInfo').textContent=`${fmtBytes(file.size)} ・ ${file.type}`;$('inputTag').textContent='IMAGE LOADED';$('previewDims').textContent='画像情報を取得中…';img.onload=()=>{state.width=img.naturalWidth;state.height=img.naturalHeight;state.inpaintMaskCanvas=document.createElement('canvas');state.inpaintMaskCanvas.width=state.width;state.inpaintMaskCanvas.height=state.height;updateCompositionControls();drawPromptOverlay();$('previewDims').textContent=`${state.width.toLocaleString()} × ${state.height.toLocaleString()} px`;$('fileInfo').textContent=`${fmtBytes(file.size)} ・ ${state.width}×${state.height}px`};$('runMattingBtn').disabled=!state.libraryReady;updateSamControls();$('showInputBtn').disabled=false;$('showOutputBtn').disabled=true;state.view='input';log(`画像読込: ${file.name} (${fmtBytes(file.size)})`);toast('画像を読み込みました')}
+function removeImage(){clearCompositionAssetCache();state.compositionBaseMode='original';$('compositionBase').value='original';state.samPoints=[];state.samSelectMode=false;clearSamCandidates();state.lastSamMask=null;state.lastSamCutoutBlob=null;state.lastSamCutoutGeometry=null;state.lastMattingBlob=null;state.lastInpaintBlob=null;resetDesignParsing();state.inpaintPaintMode=false;state.inpaintMaskCanvas=null;state.inpaintMaskHasContent=false;resetOcrResults();updateInpaintControls();updateSamControls();drawPromptOverlay();if(state.imageUrl)URL.revokeObjectURL(state.imageUrl);if(state.outputUrl)URL.revokeObjectURL(state.outputUrl);state.file=null;state.imageUrl=null;state.outputUrl=null;state.outputBlob=null;state.width=0;state.height=0;$('previewImage').removeAttribute('src');$('previewImage').classList.add('hidden');$('previewBox').classList.add('empty');$('fileMeta').classList.add('hidden');$('inputTag').textContent='NO IMAGE';$('previewDims').textContent='画像未選択';$('runMattingBtn').disabled=true;$('showOutputBtn').disabled=true;state.view='input';updateSamControls();updateInpaintControls();drawPromptOverlay()}
+function displayView(mode){state.view=mode;if(mode!=='input')state.samSelectMode=false;updateSamControls();updateInpaintControls();if(mode==='output'&&state.outputUrl){$('previewImage').src=state.outputUrl;$('showOutputBtn').disabled=false}else{$('previewImage').src=state.imageUrl||''}if(!state.imageUrl&&!state.outputUrl)$('previewImage').classList.add('hidden');else $('previewImage').classList.remove('hidden');$('previewBox').classList.toggle('empty',!state.imageUrl&&!state.outputUrl);$('previewBox').classList.toggle('sam-select-active',state.samSelectMode);drawPromptOverlay()}
+function addResult(name,blob,meta){const url=URL.createObjectURL(blob);state.results.push({name,blob,url,meta});$('resultCount').textContent=state.results.length+' ITEMS';const row=document.createElement('div');row.className='resultitem';const info=document.createElement('div');info.style.minWidth='0';const strong=document.createElement('strong');strong.textContent=name;const small=document.createElement('small');small.textContent=`${fmtBytes(blob.size)} ・ ${meta.width}×${meta.height}px`;info.append(strong,document.createElement('br'),small);const actions=document.createElement('div');actions.style.display='flex';actions.style.gap='5px';const view=document.createElement('button');view.className='btn small';view.textContent='表示';view.onclick=()=>{state.outputUrl=url;state.outputBlob=blob;displayView('output');$('showOutputBtn').disabled=false};const dl=document.createElement('a');dl.className='btn small';dl.textContent='保存';dl.href=url;dl.download=name;actions.append(view,dl);row.append(info,actions);$('resultList').querySelector('.resultempty')?.remove();$('resultList').prepend(row)}
+function updateSamControls(){
+ const hasImage=!!state.file;const ready=!!state.samReady;const busy=state.jobRunning||state.samLoading||state.ocrLoading||state.ocrBusy||state.inpaintLoading;
+ $('loadSamBtn').disabled=state.samLoading||ready;
+ $('loadSamBtn').textContent=ready?'SAMモデル読込済み':state.samLoading?'モデル読み込み中…':'SAMモデルを読み込む';
+ $('selectSamBtn').disabled=!hasImage||!ready||busy;
+ $('selectSamBtn').textContent=state.samSelectMode?'選択モードを終了':'画像上で対象を選択';
+ $('selectSamBtn').classList.toggle('selected',state.samSelectMode);
+ $('samPointType').disabled=!hasImage||!ready||busy;
+ $('clearSamPointsBtn').disabled=state.samPoints.length===0||busy;
+ $('samPromptCount').textContent=`選択点 ${state.samPoints.length}（＋${state.samPoints.filter(p=>p.label===1).length} / −${state.samPoints.filter(p=>p.label===0).length}）`;
+ $('runSamBtn').disabled=!hasImage||!ready||busy||!state.samPoints.some(p=>p.label===1)||state.view!=='input';
+ if($('runSamAutoBtn')){$('runSamAutoBtn').disabled=!hasImage||!ready||busy||state.view!=='input'||state.samAutoRunning;$('runSamAutoBtn').textContent=state.samAutoRunning?'候補を生成中…':'候補を自動生成'}
+ $('previewBox').classList.toggle('sam-select-active',state.samSelectMode);
+}
+function drawPromptOverlay(){
+ const canvas=$('promptOverlay');if(!canvas)return;const box=$('previewBox');const img=$('previewImage');
+ const dpr=Math.max(1,window.devicePixelRatio||1),w=box.clientWidth,h=box.clientHeight;
+ if(!w||!h){canvas.classList.add('hidden');return}
+ canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);canvas.classList.remove('hidden');canvas.style.pointerEvents=state.inpaintPaintMode?'auto':'none';canvas.style.touchAction=state.inpaintPaintMode?'none':'auto';
+ const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+ if(!state.width||!state.height||state.view!=='input'||img.classList.contains('hidden'))return;
+ const br=box.getBoundingClientRect(),ir=img.getBoundingClientRect();if(!ir.width||!ir.height)return;
+ if(state.ocrOverlayVisible&&state.ocrLines.length){
+  state.ocrLines.forEach((line,index)=>{if(!line.include)return;const x=ir.left-br.left+(line.left/state.width)*ir.width,y=ir.top-br.top+(line.top/state.height)*ir.height,bw=(line.width/state.width)*ir.width,bh=(line.height/state.height)*ir.height;ctx.fillStyle='rgba(79,126,196,.10)';ctx.fillRect(x,y,bw,bh);ctx.strokeStyle='#4f7ec4';ctx.lineWidth=1.5;ctx.strokeRect(x,y,bw,bh);const label=String(index+1);ctx.font='bold 10px sans-serif';const tw=ctx.measureText(label).width+8;ctx.fillStyle='#4f7ec4';ctx.fillRect(x,y-15,tw,14);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,x+tw/2,y-8)});
+ }
+ if(state.designOverlayVisible&&state.designParsed&&state.designLayers.length){
+  const colors={text:'#4f7ec4',image:'#d28b43',background:'#6b9d76',shape:'#9874b8'};
+  state.designLayers.filter(layer=>layer.visible&&layer.type!=='background').forEach((layer,index)=>{
+   const g=layer.geometry,x=ir.left-br.left+(g.x/state.width)*ir.width,y=ir.top-br.top+(g.y/state.height)*ir.height,bw=(g.width/state.width)*ir.width,bh=(g.height/state.height)*ir.height;
+   const color=colors[layer.type]||'#6b9d76';ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color+'22';ctx.lineWidth=layer.id===state.designSelectedId?2.8:1.6;ctx.setLineDash(layer.id===state.designSelectedId?[]:[5,3]);ctx.fillRect(x,y,bw,bh);ctx.strokeRect(x,y,bw,bh);ctx.setLineDash([]);ctx.font='bold 10px sans-serif';const label=`${index+1} ${layer.name||layerTypeLabel(layer.type)}`;const maxW=Math.max(40,Math.min(180,bw+32));const text=label.length>23?label.slice(0,22)+'…':label;const tw=Math.min(maxW,ctx.measureText(text).width+10);ctx.fillStyle=color;ctx.fillRect(x,y-16,tw,15);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(text,x+5,y-8);ctx.restore();
+  });
+ }
+ if(state.inpaintMaskVisible&&state.inpaintMaskHasContent&&state.inpaintMaskCanvas&&state.inpaintMaskCanvas.width){
+  const mw=Math.max(1,Math.round(ir.width*dpr)),mh=Math.max(1,Math.round(ir.height*dpr));
+  const preview=document.createElement('canvas');preview.width=mw;preview.height=mh;const pctx=preview.getContext('2d');pctx.drawImage(state.inpaintMaskCanvas,0,0,mw,mh);pctx.globalCompositeOperation='source-in';pctx.fillStyle='rgba(224,72,72,.48)';pctx.fillRect(0,0,mw,mh);pctx.globalCompositeOperation='source-over';ctx.drawImage(preview,ir.left-br.left,ir.top-br.top,ir.width,ir.height);
+ }
+ state.samPoints.forEach((p,index)=>{const x=ir.left-br.left+(p.x/state.width)*ir.width,y=ir.top-br.top+(p.y/state.height)*ir.height;ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.fillStyle=p.label===1?'#2e9a62':'#d65757';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle='#fff';ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 11px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.label===1?'+':'−',x,y+.5);ctx.beginPath();ctx.arc(x,y,13,0,Math.PI*2);ctx.lineWidth=1;ctx.strokeStyle='rgba(25,35,48,.65)';ctx.stroke()});
+}
+async function loadSam(){
+ if(state.samReady||state.samLoading||state.ocrLoading||state.ocrBusy||state.inpaintLoading||state.jobRunning)return;
+ state.samLoading=true;updateSamControls();updateOcrControls();setPill('samStatus','準備中','warn');setPill('samModelRegistryStatus','取得中','warn');
+ try{
+  if(!state.libraryReady)await loadLibrary();
+  const requested=$('backendSelect').value;let backend=requested==='auto'?(navigator.gpu?'webgpu':'wasm'):requested;
+  if(backend==='webgpu'&&!navigator.gpu)throw new Error('このブラウザーではWebGPUを利用できません。自動またはWASMを選択してください。');
+  let ready=false;
+  try{const r=await requestWorker('LOAD_SAM',{backend,dtype:'q8'},900000);ready=!!r.model}
+  catch(err){if(requested==='auto'&&backend==='webgpu'){log('SAMのWebGPU初期化に失敗。WASMへ切り替えます: '+err.message,'WARN');const r=await requestWorker('LOAD_SAM',{backend:'wasm',dtype:'q8'},900000);ready=!!r.model}else throw err}
+  if(!ready)throw new Error('SAMモデルの初期化を確認できませんでした');
+  state.samReady=true;setPill('samStatus','読込済み','good');setPill('samModelRegistryStatus','読込済み','good');log('SLIM-SAM 77 量子化モデルの読み込み完了','SUCCESS');toast('SAMモデルを読み込みました');
+ }catch(err){setPill('samStatus','読込失敗','bad');setPill('samModelRegistryStatus','読込失敗','bad');log('SAM読込エラー: '+err.message,'ERROR');toast('SAMモデルを読み込めませんでした')}
+ finally{state.samLoading=false;updateSamControls();updateOcrControls()}
+}
+function toggleSamSelect(){if(!state.file){toast('先に画像を読み込んでください');return}if(!state.samReady){toast('先にSAMモデルを読み込んでください');return}if(state.view!=='input')displayView('input');state.samSelectMode=!state.samSelectMode;updateSamControls();drawPromptOverlay();if(state.samSelectMode)toast('画像上をクリックして対象点を追加してください');else toast('対象選択モードを終了しました')}
+function addSamPromptPoint(event){if(!state.samSelectMode||state.view!=='input'||!state.file)return;const img=$('previewImage'),rect=img.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)return;const x=Math.max(0,Math.min(state.width-1,Math.round((event.clientX-rect.left)*state.width/rect.width)));const y=Math.max(0,Math.min(state.height-1,Math.round((event.clientY-rect.top)*state.height/rect.height)));state.samPoints.push({x,y,label:Number($('samPointType').value)});updateSamControls();drawPromptOverlay();log(`SAMプロンプト点追加: ${x}, ${y} / ${Number($('samPointType').value)===1?'対象':'除外'}`)}
+function canvasToBlob(canvas,type='image/png'){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('画像Blobを生成できませんでした')),type))}
+async function createSamLayerBlobs(maskBuffer,maskWidth,maskHeight){
+ const bitmap=await createImageBitmap(state.file);const width=bitmap.width,height=bitmap.height;const mask=new Uint8Array(maskBuffer);
+ if(mask.length!==maskWidth*maskHeight){bitmap.close?.();throw new Error('マスクのデータサイズが一致しません')}
+ let minX=maskWidth,minY=maskHeight,maxX=-1,maxY=-1;
+ for(let y=0;y<maskHeight;y++)for(let x=0;x<maskWidth;x++)if(mask[y*maskWidth+x]>0){if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
+ if(maxX<minX||maxY<minY){bitmap.close?.();throw new Error('空のマスクは切り出せません')}
+ const left=Math.max(0,Math.floor(minX*width/maskWidth)),top=Math.max(0,Math.floor(minY*height/maskHeight));
+ const right=Math.min(width,Math.ceil((maxX+1)*width/maskWidth)),bottom=Math.min(height,Math.ceil((maxY+1)*height/maskHeight));
+ const cropWidth=Math.max(1,right-left),cropHeight=Math.max(1,bottom-top);
+ const cut=document.createElement('canvas');cut.width=cropWidth;cut.height=cropHeight;const cctx=cut.getContext('2d',{willReadFrequently:true});
+ cctx.drawImage(bitmap,left,top,cropWidth,cropHeight,0,0,cropWidth,cropHeight);const pixels=cctx.getImageData(0,0,cropWidth,cropHeight);
+ const maskCanvas=document.createElement('canvas');maskCanvas.width=cropWidth;maskCanvas.height=cropHeight;const mctx=maskCanvas.getContext('2d');const maskPixels=mctx.createImageData(cropWidth,cropHeight);
+ for(let y=0;y<cropHeight;y++)for(let x=0;x<cropWidth;x++){
+  const sourceX=left+x,sourceY=top+y,maskX=Math.min(maskWidth-1,Math.floor(sourceX*maskWidth/width)),maskY=Math.min(maskHeight-1,Math.floor(sourceY*maskHeight/height));
+  const value=mask[maskY*maskWidth+maskX]>0?255:0,i=(y*cropWidth+x)*4;
+  pixels.data[i+3]=value;maskPixels.data[i]=value;maskPixels.data[i+1]=value;maskPixels.data[i+2]=value;maskPixels.data[i+3]=255;
+ }
+ cctx.putImageData(pixels,0,0);mctx.putImageData(maskPixels,0,0);bitmap.close?.();
+ return{cutout:await canvasToBlob(cut),mask:await canvasToBlob(maskCanvas),width:cropWidth,height:cropHeight,x:left,y:top};
+}
+
+function clearSamCandidates(){
+ (state.samCandidates||[]).forEach(candidate=>{if(candidate.thumbUrl)URL.revokeObjectURL(candidate.thumbUrl)});
+ state.samCandidates=[];
+ const panel=$('samCandidatePanel');if(panel)panel.classList.add('hidden');
+ if($('samCandidateCount'))$('samCandidateCount').textContent='0';
+ if($('samCandidateList'))$('samCandidateList').replaceChildren();
+}
+function maskIntersectionStats(a,b){
+ if(!a?.data||!b?.data||a.width!==b.width||a.height!==b.height)return{iou:0,containment:0};
+ const step=Math.max(1,Math.floor(Math.sqrt(a.data.length/16000)));let intersection=0,countA=0,countB=0;
+ for(let y=0;y<a.height;y+=step)for(let x=0;x<a.width;x+=step){const index=y*a.width+x,aa=a.data[index]>0,bb=b.data[index]>0;if(aa)countA++;if(bb)countB++;if(aa&&bb)intersection++}
+ const union=countA+countB-intersection;return{iou:union?intersection/union:0,containment:Math.min(countA,countB)?intersection/Math.min(countA,countB):0};
+}
+function pointInsideOcr(x,y){return state.ocrLines.some(line=>line.include&&line.text?.trim()&&x>=line.left-8&&x<=line.left+line.width+8&&y>=line.top-8&&y<=line.top+line.height+8)}
+function renderSamCandidates(){
+ const host=$('samCandidateList');if(!host)return;host.replaceChildren();
+ $('samCandidatePanel').classList.toggle('hidden',!state.samCandidates.length);
+ $('samCandidateCount').textContent=`${state.samCandidates.filter(x=>x.include).length}/${state.samCandidates.length} 採用`;
+ if(!state.samCandidates.length)return;
+ state.samCandidates.forEach((candidate,index)=>{
+  const row=document.createElement('div');row.className='sam-candidate';
+  const img=document.createElement('img');img.className='sam-candidate-thumb';img.alt=`候補 ${index+1}`;img.src=candidate.thumbUrl;
+  const info=document.createElement('div');info.className='sam-candidate-info';
+  const title=document.createElement('strong');title.textContent=`オブジェクト候補 ${String(index+1).padStart(2,'0')}`;
+  const g=candidate.bounds;const meta=document.createElement('small');meta.textContent=`${Math.round(g.x)}, ${Math.round(g.y)} ・ ${Math.round(g.width)}×${Math.round(g.height)}px ・ IoU ${(candidate.score??0).toFixed(2)}`;
+  info.append(title,meta);
+  const label=document.createElement('label');label.className='sam-candidate-check';const check=document.createElement('input');check.type='checkbox';check.checked=candidate.include;check.addEventListener('change',()=>{candidate.include=check.checked;renderSamCandidates();if(state.designParsed)parseDesignScene()});label.append(check,document.createTextNode('採用'));
+  row.append(img,info,label);host.append(row);
+ });
+ $('samCandidateSelectAll').disabled=!state.samCandidates.length;$('samCandidateSelectNone').disabled=!state.samCandidates.length;
+}
+async function runSamAutoCandidates(){
+ if(!state.file){toast('先に画像を読み込んでください');return}
+ if(!state.samReady){toast('先にSAMモデルを読み込んでください');return}
+ if(state.jobRunning||state.samAutoRunning)return;
+ const grid=Math.max(2,Math.min(4,Number($('samAutoGrid').value)||3));
+ const points=[];
+ for(let row=0;row<grid;row++)for(let col=0;col<grid;col++){
+  const x=Math.round((col+.5)*state.width/grid),y=Math.round((row+.5)*state.height/grid);
+  if(x>=state.width||y>=state.height||pointInsideOcr(x,y))continue;
+  points.push({x,y});
+ }
+ if(!points.length){toast('探索地点がOCR文字領域と重なっています。OCR枠を非表示にするか、OCR結果を確認してください');return}
+ clearSamCandidates();resetDesignParsing();state.jobRunning=true;state.samAutoRunning=true;state.samSelectMode=false;updateSamControls();updateOcrControls();$('progressWrap').classList.remove('hidden');$('progressBar').style.width='5%';setPill('samStatus','候補探索中','warn');
+ log(`SAM複数候補探索を開始: ${grid}×${grid} / 実行地点 ${points.length} / OCR文字領域はサンプリング対象外`);
+ try{
+  const response=await requestWorker('RUN_SAM_GRID',{blob:state.file,points},900000);
+  const sourceCandidates=[];
+  for(const raw of (response.candidates||[])){
+   const mask={data:new Uint8Array(raw.maskBuffer),width:raw.width,height:raw.height};
+   const bounds=maskBounds(mask);if(!bounds)continue;
+   const area=bounds.coverage;
+   if(area<.002||area>.82)continue;
+   const touchesLeft=bounds.x<=state.width*.003,touchesTop=bounds.y<=state.height*.003,touchesRight=bounds.x+bounds.width>=state.width*.997,touchesBottom=bounds.y+bounds.height>=state.height*.997;
+   const edgeCount=[touchesLeft,touchesTop,touchesRight,touchesBottom].filter(Boolean).length;
+   if(edgeCount>=3&&area>.12)continue;
+   const pointX=Math.max(0,Math.min(mask.width-1,Math.floor(raw.x*mask.width/state.width))),pointY=Math.max(0,Math.min(mask.height-1,Math.floor(raw.y*mask.height/state.height)));
+   const pointIndex=pointY*mask.width+pointX;
+   if(mask.data[pointIndex]===0)continue;
+   const candidate={mask,bounds,score:raw.score,point:{x:raw.x,y:raw.y},include:true};
+   let duplicateIndex=-1;
+   for(let i=0;i<sourceCandidates.length;i++){
+    const overlap=maskIntersectionStats(candidate.mask,sourceCandidates[i].mask);
+    if(overlap.iou>=.72||overlap.containment>=.96){duplicateIndex=i;break}
+   }
+   if(duplicateIndex<0)sourceCandidates.push(candidate);
+   else if((candidate.score??0)>(sourceCandidates[duplicateIndex].score??0))sourceCandidates[duplicateIndex]=candidate;
+  }
+  sourceCandidates.sort((a,b)=>a.bounds.y-b.bounds.y||a.bounds.x-b.bounds.x);
+  const accepted=sourceCandidates.slice(0,8);
+  for(let i=0;i<accepted.length;i++){
+   const candidate=accepted[i];
+   const output=await createSamLayerBlobs(candidate.mask.data.buffer.slice(candidate.mask.data.byteOffset,candidate.mask.data.byteOffset+candidate.mask.data.byteLength),candidate.mask.width,candidate.mask.height);
+   candidate.cutoutBlob=output.cutout;candidate.maskBlob=output.mask;candidate.bounds={x:output.x,y:output.y,width:output.width,height:output.height,coverage:candidate.bounds.coverage};candidate.assetName=`SAM_Auto_Object_${String(i+1).padStart(2,'0')}_Cutout.png`;candidate.maskAssetName=`SAM_Auto_Object_${String(i+1).padStart(2,'0')}_Mask.png`;candidate.thumbUrl=URL.createObjectURL(output.cutout);
+   addResult(candidate.assetName,output.cutout,{width:output.width,height:output.height});
+   addResult(candidate.maskAssetName,output.mask,{width:output.width,height:output.height});
+   $('progressBar').style.width=`${Math.round(65+(i+1)/Math.max(1,accepted.length)*35)}%`;
+  }
+  state.samCandidates=accepted;renderSamCandidates();updateDesignSourceSummary();
+  setPill('samStatus',accepted.length?'候補生成済み':'候補なし',accepted.length?'good':'warn');$('progressBar').style.width='100%';
+  log(`SAM複数候補探索完了: 推論 ${response.candidates?.length||0} / 重複・領域フィルター後 ${sourceCandidates.length} / 採用可能 ${accepted.length}`,'SUCCESS');
+  if(!accepted.length)toast('候補が見つかりませんでした。探索密度を上げるか、手動選択を使ってください');
+  else toast(`${accepted.length}個のオブジェクト候補を作成しました。採用する候補を確認してください`);
+ }catch(err){setPill('samStatus','自動探索エラー','bad');log('SAM自動候補エラー: '+(err?.message||String(err)),'ERROR');if(err?.stack)log(err.stack,'DEBUG');toast('画像デコードまたは候補推論に失敗しました。詳細ログを確認してください')}
+ finally{state.jobRunning=false;state.samAutoRunning=false;updateSamControls();updateOcrControls();updateDesignSourceSummary();updateInpaintControls();setTimeout(()=>$('progressWrap').classList.add('hidden'),1100)}
+}
+async function runSam(){
+ if(!state.file){toast('先に画像を読み込んでください');return}if(!state.samReady){toast('先にSAMモデルを読み込んでください');return}if(!state.samPoints.some(p=>p.label===1)){toast('対象点（＋）を1つ以上追加してください');return}if(state.jobRunning)return;
+ state.jobRunning=true;state.samSelectMode=false;updateSamControls();updateOcrControls();$('progressWrap').classList.remove('hidden');$('progressBar').style.width='5%';setPill('samStatus','推論中','warn');log(`SAM分離開始: プロンプト点 ${state.samPoints.length}個`);
+ try{
+  const r=await requestWorker('RUN_SAM_POINT',{blob:state.file,points:state.samPoints.map(p=>({...p}))},600000);
+  state.lastSamMask={data:new Uint8Array(r.maskBuffer).slice(),width:r.width,height:r.height};updateInpaintControls();const outputs=await createSamLayerBlobs(r.maskBuffer,r.width,r.height);state.lastSamCutoutBlob=outputs.cutout;state.lastSamCutoutGeometry={x:outputs.x,y:outputs.y,width:outputs.width,height:outputs.height};resetDesignParsing();updateDesignSourceSummary();state.outputBlob=outputs.cutout;if(state.outputUrl)URL.revokeObjectURL(state.outputUrl);state.outputUrl=URL.createObjectURL(outputs.cutout);displayView('output');$('showOutputBtn').disabled=false;
+  addResult('SAM_Object_Cutout.png',outputs.cutout,{width:outputs.width,height:outputs.height});addResult('SAM_Object_Mask.png',outputs.mask,{width:outputs.width,height:outputs.height});
+  setPill('samStatus','実行済み','good');setPill('samModelRegistryStatus','読込済み','good');$('progressBar').style.width='100%';log(`SAMマスク生成完了: ${r.width}×${r.height}px / IoU ${(r.score??0).toFixed(3)}`,'SUCCESS');toast('対象の切り出しとマスク生成が完了しました');
+ }catch(err){setPill('samStatus','エラー','bad');log('SAM推論エラー: '+(err?.message||String(err)),'ERROR');if(err?.stack)log(err.stack,'DEBUG');toast('画像デコードまたはSAM推論に失敗しました。詳細ログを確認してください')}
+ finally{state.jobRunning=false;updateSamControls();updateOcrControls();setTimeout(()=>$('progressWrap').classList.add('hidden'),900)}
+}
+
+function setInpaintStatus(text,kind=''){setPill('inpaintStatus',text,kind);setPill('inpaintModelRegistryStatus',text,kind)}
+function updateInpaintControls(){
+ const hasImage=!!state.file,maskReady=!!state.inpaintMaskHasContent,busy=state.inpaintLoading||state.jobRunning||state.ocrBusy||state.ocrLoading||state.samLoading;
+ $('loadInpaintBtn').disabled=busy||state.inpaintReady;$('loadInpaintBtn').textContent=state.inpaintReady?'LaMa準備済み':state.inpaintLoading?'モデル取得中…':'LaMaモデルを読み込む';
+ $('toggleMaskPaintBtn').disabled=!hasImage||busy;$('toggleMaskPaintBtn').textContent=state.inpaintPaintMode?'描画を終了':'マスクを塗る';$('toggleMaskPaintBtn').classList.toggle('selected',state.inpaintPaintMode);
+ $('maskPaintMode').disabled=!hasImage||busy;$('maskBrushSize').disabled=!hasImage||busy;$('clearInpaintMaskBtn').disabled=!maskReady||busy;
+ $('maskFromOcrBtn').disabled=!hasImage||!state.ocrLines.some(x=>x.include)||busy;$('maskFromSamBtn').disabled=!hasImage||!state.lastSamMask||busy;
+ $('runInpaintBtn').disabled=!hasImage||!state.inpaintReady||!maskReady||busy;$('exportInpaintMaskBtn').disabled=!maskReady||busy;
+ $('inpaintMaskCount').textContent=maskReady?'マスクあり':'マスクなし';$('maskBrushValue').textContent=Number($('maskBrushSize').value)+' px';$('ocrMaskPaddingValue').textContent=Number($('ocrMaskPadding').value)+' px';$('maskGrowValue').textContent=Number($('maskGrowRadius').value)+' px';
+ $('previewBox').classList.toggle('inpaint-preview-active',state.inpaintPaintMode);
+}
+async function loadInpaintModel(){if(state.inpaintReady||state.inpaintLoading||state.samLoading||state.ocrLoading||state.ocrBusy||state.jobRunning)return;state.inpaintLoading=true;updateInpaintControls();updateSamControls();updateOcrControls();setInpaintStatus('準備中','warn');$('progressWrap').classList.remove('hidden');$('progressBar').style.width='2%';log('LaMa背景補完モデルを準備します');try{
+ await ensureWorker();const result=await requestWorker('LOAD_INPAINT',{},1200000);state.inpaintReady=true;setInpaintStatus('準備完了','good');log(`LaMaモデル準備完了 / 入力: ${(result.inputs||[]).join(', ')} / 出力: ${(result.outputs||[]).join(', ')}`,'SUCCESS');toast('背景補完モデルを準備しました');$('progressBar').style.width='100%';
+ }catch(err){state.inpaintReady=false;setInpaintStatus('取得失敗','bad');log('LaMa準備エラー: '+(err?.message||err),'ERROR');toast('LaMaモデルを準備できませんでした。ログを確認してください')}
+ finally{state.inpaintLoading=false;updateInpaintControls();updateSamControls();updateOcrControls();setTimeout(()=>$('progressWrap').classList.add('hidden'),900)}}
+function toggleMaskPaint(){if(!state.file){toast('先に画像を読み込んでください');return}if(state.view!=='input')displayView('input');state.samSelectMode=false;state.inpaintPaintMode=!state.inpaintPaintMode;updateSamControls();updateInpaintControls();drawPromptOverlay();toast(state.inpaintPaintMode?'プレビュー上をなぞって補完範囲を塗ってください':'マスク描画を終了しました')}
+function addOcrRegionsToMask(){if(!state.inpaintMaskCanvas||!state.ocrLines.some(x=>x.include)){toast('先にOCR文字を検出してください');return}const ctx=state.inpaintMaskCanvas.getContext('2d');const pad=Number($('ocrMaskPadding').value)||0;ctx.save();ctx.fillStyle='#fff';state.ocrLines.filter(x=>x.include&&x.text.trim()).forEach(line=>ctx.fillRect(Math.max(0,line.left-pad),Math.max(0,line.top-pad),Math.min(state.width-Math.max(0,line.left-pad),line.width+pad*2),Math.min(state.height-Math.max(0,line.top-pad),line.height+pad*2)));ctx.restore();state.inpaintMaskHasContent=true;state.inpaintMaskVisible=true;$('inpaintMaskOverlay').checked=true;drawPromptOverlay();updateInpaintControls();log(`OCR領域をマスクへ追加: ${state.ocrLines.filter(x=>x.include&&x.text.trim()).length}行`,'SUCCESS');toast('OCR文字領域をマスクに追加しました')}
+function addSamMaskToInpaint(){const sm=state.lastSamMask;if(!sm||!state.inpaintMaskCanvas){toast('先にSAMで対象物を分離してください');return}const temp=document.createElement('canvas');temp.width=sm.width;temp.height=sm.height;const ctx=temp.getContext('2d');const image=ctx.createImageData(sm.width,sm.height);for(let i=0;i<sm.data.length;i++){const p=i*4;image.data[p]=255;image.data[p+1]=255;image.data[p+2]=255;image.data[p+3]=sm.data[i]>0?255:0}ctx.putImageData(image,0,0);const maskCtx=state.inpaintMaskCanvas.getContext('2d');maskCtx.drawImage(temp,0,0,state.width,state.height);state.inpaintMaskHasContent=true;state.inpaintMaskVisible=true;$('inpaintMaskOverlay').checked=true;drawPromptOverlay();updateInpaintControls();log('直近のSAMマスクを背景補完範囲へ追加','SUCCESS');toast('SAMマスクを読み込みました')}
+function clearInpaintMask(){if(!state.inpaintMaskCanvas)return;const ctx=state.inpaintMaskCanvas.getContext('2d');ctx.clearRect(0,0,state.width,state.height);state.inpaintMaskHasContent=false;state.inpaintPaintMode=false;drawPromptOverlay();updateInpaintControls();log('背景補完マスクをクリアしました')}
+function getImagePointFromPointer(event){const rect=$('previewImage').getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)return null;return{x:Math.max(0,Math.min(state.width,((event.clientX-rect.left)/rect.width)*state.width)),y:Math.max(0,Math.min(state.height,((event.clientY-rect.top)/rect.height)*state.height))}}
+let maskStrokeActive=false,lastMaskPoint=null,maskDrawFrame=0;
+function paintMaskSegment(a,b){if(!state.inpaintMaskCanvas)return;const ctx=state.inpaintMaskCanvas.getContext('2d');ctx.save();ctx.globalCompositeOperation=$('maskPaintMode').value==='erase'?'destination-out':'source-over';ctx.strokeStyle='#fff';ctx.fillStyle='#fff';ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=Number($('maskBrushSize').value)||36;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.beginPath();ctx.arc(b.x,b.y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();ctx.restore();state.inpaintMaskHasContent=$('maskPaintMode').value==='erase'?state.inpaintMaskHasContent:true;if(!maskDrawFrame){maskDrawFrame=requestAnimationFrame(()=>{maskDrawFrame=0;drawPromptOverlay();updateInpaintControls()})}}
+function startMaskStroke(event){if(!state.inpaintPaintMode||state.view!=='input'||!state.file)return;const point=getImagePointFromPointer(event);if(!point)return;event.preventDefault();maskStrokeActive=true;lastMaskPoint=point;$('promptOverlay').setPointerCapture?.(event.pointerId);paintMaskSegment(point,point)}
+function moveMaskStroke(event){if(!maskStrokeActive||!state.inpaintPaintMode)return;const point=getImagePointFromPointer(event);if(!point)return;event.preventDefault();paintMaskSegment(lastMaskPoint,point);lastMaskPoint=point}
+function endMaskStroke(event){if(!maskStrokeActive)return;maskStrokeActive=false;lastMaskPoint=null;if(maskDrawFrame){cancelAnimationFrame(maskDrawFrame);maskDrawFrame=0}drawPromptOverlay();updateInpaintControls();try{$('promptOverlay').releasePointerCapture?.(event.pointerId)}catch{}}
+function exportInpaintMask(){if(!state.inpaintMaskCanvas||!state.inpaintMaskHasContent)return;canvasToBlob(state.inpaintMaskCanvas).then(blob=>{downloadBlob(blob,'Inpainting_Mask.png');addResult('Inpainting_Mask.png',blob,{width:state.width,height:state.height});log('背景補完マスクPNGを書き出しました','SUCCESS')}).catch(err=>{log(err.message,'ERROR');toast('マスクを書き出せませんでした')})}
+function dilateBinaryMask(source,width,height,radius){if(radius<=0)return source;let horizontal=new Uint8Array(source.length),out=new Uint8Array(source.length);for(let y=0;y<height;y++){const row=y*width;for(let x=0;x<width;x++){let v=0;for(let k=-radius;k<=radius;k++){const xx=x+k;if(xx>=0&&xx<width&&source[row+xx]){v=1;break}}horizontal[row+x]=v}}for(let y=0;y<height;y++)for(let x=0;x<width;x++){let v=0;for(let k=-radius;k<=radius;k++){const yy=y+k;if(yy>=0&&yy<height&&horizontal[yy*width+x]){v=1;break}}out[y*width+x]=v?255:0}return out}
+async function runInpainting(){if(!state.file){toast('先に画像を読み込んでください');return}if(!state.inpaintReady){toast('先にLaMaモデルを読み込んでください');return}if(!state.inpaintMaskHasContent){toast('先に補完する範囲をマスクしてください');return}if(state.jobRunning)return;const sourceFile=state.file;state.jobRunning=true;state.inpaintPaintMode=false;if(state.view!=='input')displayView('input');updateInpaintControls();updateSamControls();updateOcrControls();$('progressWrap').classList.remove('hidden');$('progressBar').style.width='4%';setInpaintStatus('補完中','warn');log('LaMa背景補完ジョブ開始');let bitmap=null;try{
+ bitmap=await createImageBitmap(sourceFile);const maxSide=Number($('inpaintQuality').value)||1024;const scale=Math.min(1,maxSide/Math.max(state.width,state.height));const w=Math.max(8,Math.ceil(state.width*scale/8)*8),h=Math.max(8,Math.ceil(state.height*scale/8)*8);if(w>4096||h>4096)throw new Error('処理画像が4096pxを超えています');
+ const inputCanvas=document.createElement('canvas');inputCanvas.width=w;inputCanvas.height=h;const ictx=inputCanvas.getContext('2d',{willReadFrequently:true});ictx.drawImage(bitmap,0,0,w,h);const imageData=ictx.getImageData(0,0,w,h);
+ const maskCanvas=document.createElement('canvas');maskCanvas.width=w;maskCanvas.height=h;const mctx=maskCanvas.getContext('2d',{willReadFrequently:true});mctx.drawImage(state.inpaintMaskCanvas,0,0,w,h);const maskImage=mctx.getImageData(0,0,w,h);let maskBytes=new Uint8Array(w*h),hasMask=false;for(let i=0;i<maskBytes.length;i++){const a=maskImage.data[i*4+3];if(a>0){maskBytes[i]=255;hasMask=true}}if(!hasMask)throw new Error('有効なマスク領域がありません');
+ const grow=Math.max(0,Math.min(12,Math.round(Number($('maskGrowRadius')?.value??3)*scale)));if(grow)maskBytes=dilateBinaryMask(maskBytes,w,h,grow);
+ $('progressBar').style.width='12%';log(`前処理: ${w}×${h}px / マスク拡張 ${grow}px / 元画像 ${state.width}×${state.height}px`);
+ const compositeMaskBytes=maskBytes.slice();const r=await requestWorker('RUN_INPAINT',{imageBuffer:imageData.data.buffer,maskBuffer:maskBytes.buffer,width:w,height:h},900000,[imageData.data.buffer,maskBytes.buffer]);if(state.file!==sourceFile){log('処理中に画像が切り替わったため結果を破棄しました','WARN');return}
+ const outputData=new Float32Array(r.outputBuffer),processedCanvas=document.createElement('canvas');processedCanvas.width=w;processedCanvas.height=h;const pctx=processedCanvas.getContext('2d');const outImage=pctx.createImageData(w,h);const plane=w*h;for(let i=0;i<plane;i++){const p=i*4;outImage.data[p]=Math.max(0,Math.min(255,outputData[i]));outImage.data[p+1]=Math.max(0,Math.min(255,outputData[plane+i]));outImage.data[p+2]=Math.max(0,Math.min(255,outputData[plane*2+i]));outImage.data[p+3]=255}pctx.putImageData(outImage,0,0);
+ const fillOnly=document.createElement('canvas');fillOnly.width=state.width;fillOnly.height=state.height;const fctx=fillOnly.getContext('2d');fctx.drawImage(processedCanvas,0,0,state.width,state.height);
+ const expandedMask=document.createElement('canvas');expandedMask.width=w;expandedMask.height=h;const emctx=expandedMask.getContext('2d');const maskOut=emctx.createImageData(w,h);for(let i=0;i<compositeMaskBytes.length;i++){const p=i*4;maskOut.data[p]=255;maskOut.data[p+1]=255;maskOut.data[p+2]=255;maskOut.data[p+3]=compositeMaskBytes[i]}emctx.putImageData(maskOut,0,0);
+ const fullMask=document.createElement('canvas');fullMask.width=state.width;fullMask.height=state.height;fullMask.getContext('2d').drawImage(expandedMask,0,0,state.width,state.height);
+ fctx.globalCompositeOperation='destination-in';fctx.drawImage(fullMask,0,0);fctx.globalCompositeOperation='source-over';
+ const finalCanvas=document.createElement('canvas');finalCanvas.width=state.width;finalCanvas.height=state.height;const finalCtx=finalCanvas.getContext('2d');finalCtx.drawImage(bitmap,0,0);finalCtx.drawImage(fillOnly,0,0);const blob=await canvasToBlob(finalCanvas,'image/png');
+ state.lastInpaintBlob=blob;updateDesignSourceSummary();updateCompositionControls();if(state.designParsed)renderCompositionPreview();state.outputBlob=blob;if(state.outputUrl)URL.revokeObjectURL(state.outputUrl);state.outputUrl=URL.createObjectURL(blob);displayView('output');addResult('LaMa_Inpainted.png',blob,{width:state.width,height:state.height});const maskBlob=await canvasToBlob(fullMask);addResult('LaMa_Inpaint_Mask.png',maskBlob,{width:state.width,height:state.height});setInpaintStatus('補完完了','good');$('progressBar').style.width='100%';log(`背景補完完了: ${state.width}×${state.height}px / 推論入力 ${w}×${h}px`,'SUCCESS');toast('背景補完が完了しました。入力画像と結果を切り替えて確認できます');
+ }catch(err){setInpaintStatus('補完エラー','bad');log('LaMa推論エラー: '+(err?.message||err),'ERROR');toast('背景補完に失敗しました。ログを確認してください')}
+ finally{bitmap?.close?.();state.jobRunning=false;updateInpaintControls();updateSamControls();updateOcrControls();setTimeout(()=>$('progressWrap').classList.add('hidden'),1000)}}
+function setOcrStatus(text,kind=''){setPill('ocrStatus',text,kind);setPill('ocrModelRegistryStatus',text,kind)}
+function updateOcrControls(){const hasImage=!!state.file;const busy=state.ocrLoading||state.ocrBusy||state.samLoading||state.inpaintLoading||state.jobRunning;$('loadOcrBtn').disabled=busy||state.ocrReady;$('ocrLanguage').disabled=busy;$('loadOcrBtn').textContent=state.ocrReady?'OCR準備済み':state.ocrLoading?'準備中…':'OCRエンジンを準備';$('runOcrBtn').disabled=!hasImage||!state.ocrReady||busy;$('exportOcrSvgBtn').disabled=!state.ocrLines.some(x=>x.include&&x.text.trim());$('exportOcrJsonBtn').disabled=!state.ocrLines.length}
+function resetOcrResults(){state.ocrLines=[];$('ocrCount').textContent='0 LINES';$('ocrLines').innerHTML='<div class="resultempty">まだ文字を検出していません</div>';updateOcrControls();updateInpaintControls();drawPromptOverlay()}
+async function loadOcrEngine(){if(state.ocrReady||state.ocrLoading||state.samLoading||state.inpaintLoading||state.jobRunning)return;state.ocrLoading=true;updateOcrControls();setOcrStatus('準備中','warn');log('Tesseract.js OCRエンジンを準備します');try{
+ const mod=await import('https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.esm.min.js');
+ const lang=$('ocrLanguage').value;const langs=lang==='jpn+eng'?['jpn','eng']:[lang];
+ const worker=await mod.createWorker(langs,1,{workerPath:'https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/worker.min.js',corePath:'https://cdn.jsdelivr.net/npm/tesseract.js-core@7.0.0',langPath:'https://tessdata.projectnaptha.com/4.0.0',cacheMethod:'write',logger:m=>{if(m.status){const pct=m.progress==null?'':` ${Math.round(m.progress*100)}%`;log(`OCR: ${m.status}${pct}`,'MODEL');if(m.progress!=null){$('progressWrap').classList.remove('hidden');$('progressBar').style.width=Math.max(0,Math.min(100,m.progress*100))+'%'}}}});
+ state.ocrWorker=worker;state.ocrReady=true;setOcrStatus('準備完了','good');log(`OCR準備完了: ${langs.join('+')}`,'SUCCESS');toast('OCRエンジンを準備しました');
+ }catch(err){setOcrStatus('準備失敗','bad');log('OCR準備エラー: '+(err?.message||err),'ERROR');toast('OCRエンジンの準備に失敗しました')}finally{state.ocrLoading=false;updateOcrControls();updateSamControls();updateInpaintControls();setTimeout(()=>$('progressWrap').classList.add('hidden'),700)}}
+function normalizeOcrLines(data){const raw=[];for(const block of (data.blocks||[])){for(const para of (block.paragraphs||[])){for(const line of (para.lines||[])){const text=String(line.text||line.words?.map(w=>w.text).join(' ')||'').trim();const b=line.bbox;if(!text||!b)continue;raw.push({text,left:Number(b.x0??b.left??0),top:Number(b.y0??b.top??0),right:Number(b.x1??b.right??0),bottom:Number(b.y1??b.bottom??0),confidence:Number(line.confidence??(line.words?.length?line.words.reduce((a,w)=>a+(Number(w.confidence)||0),0)/line.words.length:0))})}}}
+ if(!raw.length){for(const word of (data.words||[])){const text=String(word.text||'').trim(),b=word.bbox;if(text&&b)raw.push({text,left:Number(b.x0??0),top:Number(b.y0??0),right:Number(b.x1??0),bottom:Number(b.y1??0),confidence:Number(word.confidence)||0})}}
+ return raw.map((x,i)=>({id:`ocr-${Date.now()}-${i}`,text:x.text,left:Math.max(0,x.left),top:Math.max(0,x.top),width:Math.max(1,x.right-x.left),height:Math.max(1,x.bottom-x.top),confidence:Math.max(0,Math.min(100,x.confidence||0)),include:true,fontSize:Math.max(8,Math.round((x.bottom-x.top)*.82)),fontFamily:'Arial, sans-serif',fill:'#202020'})).filter(x=>x.left<state.width&&x.top<state.height).sort((a,b)=>a.top-b.top||a.left-b.left)}
+function renderOcrLines(){const host=$('ocrLines');host.replaceChildren();$('ocrCount').textContent=state.ocrLines.length+' LINES';if(!state.ocrLines.length){host.innerHTML='<div class="resultempty">文字を検出できませんでした</div>';updateOcrControls();updateInpaintControls();drawPromptOverlay();return}
+ state.ocrLines.forEach((line,index)=>{const row=document.createElement('div');row.className='ocr-line';const idx=document.createElement('div');idx.className='ocr-line-index';idx.textContent=String(index+1);const main=document.createElement('div');main.className='ocr-line-main';const input=document.createElement('input');input.type='text';input.value=line.text;input.setAttribute('aria-label',`検出テキスト ${index+1}`);input.addEventListener('input',()=>{line.text=input.value;updateOcrControls()});const meta=document.createElement('div');meta.className='ocr-line-meta';const coords=document.createElement('span');coords.textContent=`X ${Math.round(line.left)} / Y ${Math.round(line.top)} ・ ${Math.round(line.width)}×${Math.round(line.height)}px`;const conf=document.createElement('span');conf.textContent=`信頼度 ${line.confidence.toFixed(1)}%`;const include=document.createElement('label');const check=document.createElement('input');check.type='checkbox';check.checked=line.include;check.addEventListener('change',()=>{line.include=check.checked;updateOcrControls();updateInpaintControls();drawPromptOverlay()});include.append(check,document.createTextNode('出力に含める'));meta.append(coords,conf,include);main.append(input,meta);row.append(idx,main);host.append(row)});updateOcrControls();updateInpaintControls();drawPromptOverlay()}
+async function runOcr(){if(!state.file){toast('先に画像を読み込んでください');return}if(!state.ocrReady||!state.ocrWorker){toast('先にOCRエンジンを準備してください');return}if(state.ocrBusy||state.ocrLoading||state.samLoading||state.inpaintLoading||state.jobRunning)return;if(state.view!=='input')displayView('input');const sourceFile=state.file;state.ocrBusy=true;state.jobRunning=true;updateOcrControls();updateSamControls();setOcrStatus('認識中','warn');$('progressWrap').classList.remove('hidden');$('progressBar').style.width='4%';log('OCR文字検出を開始');try{
+ const result=await state.ocrWorker.recognize(sourceFile,{}, {blocks:true});if(state.file!==sourceFile){log('画像が切り替わったため、古い画像のOCR結果を破棄しました','WARN');return}state.ocrLines=normalizeOcrLines(result.data||{});resetDesignParsing();renderOcrLines();setOcrStatus(state.ocrLines.length?'検出完了':'文字なし',state.ocrLines.length?'good':'warn');$('progressBar').style.width='100%';log(`OCR完了: ${state.ocrLines.length}行を検出 / ${String(result.data?.text||'').length}文字`,'SUCCESS');if(!state.ocrLines.length)toast('文字を検出できませんでした。画像の解像度や言語を確認してください');else toast(`${state.ocrLines.length}行の文字を検出しました`)
+ }catch(err){setOcrStatus('認識エラー','bad');log('OCR認識エラー: '+(err?.message||err),'ERROR');toast('OCRに失敗しました。ログを確認してください')}finally{state.ocrBusy=false;state.jobRunning=false;updateOcrControls();updateSamControls();updateInpaintControls();setTimeout(()=>$('progressWrap').classList.add('hidden'),900)}}
+function escapeXml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[ch]))}
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+
+function resetDesignParsing(){
+ state.designLayers=[];state.designGroups=[];state.designParsed=false;state.designSelectedId=null;
+ const tree=$('designTree');if(tree)tree.innerHTML='<div class="design-empty">画像を読み込み、OCRまたはSAMを実行してから「レイアウトを解析」を押してください。</div>';
+ ['designLayerStat','designTextStat','designObjectStat','designGroupStat'].forEach(id=>{if($(id))$(id).textContent='0'});
+ if($('exportDesignJsonBtn'))$('exportDesignJsonBtn').disabled=true;
+ if($('clearDesignParseBtn'))$('clearDesignParseBtn').disabled=true;
+ if($('designProperties'))$('designProperties').classList.add('hidden');
+ if($('compositionCanvas')){$('compositionCanvas').width=0;$('compositionCanvas').height=0}
+ if($('compositionEmpty'))$('compositionEmpty').classList.remove('hidden');
+ if($('compositionStatusTag'))$('compositionStatusTag').textContent='未作成';
+ if($('renderCompositionBtn'))$('renderCompositionBtn').disabled=true;
+ if($('exportCompositionBtn'))$('exportCompositionBtn').disabled=true;
+ state.compositionMissingAssets=[];state.compositionRenderToken++;
+ updateDesignSourceSummary();drawPromptOverlay();
+}
+function updateDesignSourceSummary(){
+ if(!$('designOcrSource'))return;
+ $('designOcrSource').textContent=state.ocrLines.length?`${state.ocrLines.filter(x=>x.include&&x.text.trim()).length}行 / OCR結果あり`:'未実行';
+ $('designSamSource').textContent=state.samCandidates.length?`自動候補 ${state.samCandidates.filter(x=>x.include).length}/${state.samCandidates.length}件採用${state.lastSamMask?' + 手動マスク':''}`:(state.lastSamMask?`マスク ${state.lastSamMask.width}×${state.lastSamMask.height}`:'未実行');
+ $('designMatteSource').textContent=state.lastMattingBlob?`前景画像 ${fmtBytes(state.lastMattingBlob.size)}`:'未実行';
+ $('runDesignParseBtn').disabled=!state.file||state.jobRunning;
+ updateCompositionControls();
+}
+function maskBounds(mask){
+ if(!mask?.data?.length||!mask.width||!mask.height)return null;
+ let minX=mask.width,minY=mask.height,maxX=-1,maxY=-1,count=0;
+ for(let y=0;y<mask.height;y++)for(let x=0;x<mask.width;x++)if(mask.data[y*mask.width+x]>0){count++;if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y}
+ if(maxX<minX||!count)return null;
+ const sx=state.width/mask.width,sy=state.height/mask.height;
+ return{x:minX*sx,y:minY*sy,width:(maxX-minX+1)*sx,height:(maxY-minY+1)*sy,coverage:count/(mask.width*mask.height)};
+}
+function clusterOcrLines(lines){
+ const sorted=[...lines].sort((a,b)=>a.top-b.top||a.left-b.left);if(!sorted.length)return[];
+ const medianH=sorted.map(x=>x.height).sort((a,b)=>a-b)[Math.floor(sorted.length/2)]||20;
+ const groups=[];
+ for(const line of sorted){
+  let best=null,bestScore=Infinity;
+  for(const group of groups){
+   const verticalGap=Math.max(0,line.top-group.bottom,group.top-(line.top+line.height));
+   const leftGap=Math.abs(line.left-group.avgLeft);
+   const horizontalOverlap=Math.max(0,Math.min(line.left+line.width,group.right)-Math.max(line.left,group.left));
+   const overlapRatio=horizontalOverlap/Math.max(1,Math.min(line.width,group.right-group.left));
+   if(verticalGap<=Math.max(18,medianH*1.7)&&(leftGap<=Math.max(48,medianH*2.2)||overlapRatio>.18)){
+    const score=verticalGap/Math.max(1,medianH)+leftGap/Math.max(1,medianH*3);if(score<bestScore){bestScore=score;best=group}
+   }
+  }
+  if(best){best.items.push(line);best.left=Math.min(best.left,line.left);best.top=Math.min(best.top,line.top);best.right=Math.max(best.right,line.left+line.width);best.bottom=Math.max(best.bottom,line.top+line.height);best.avgLeft=best.items.reduce((a,x)=>a+x.left,0)/best.items.length}
+  else groups.push({items:[line],left:line.left,top:line.top,right:line.left+line.width,bottom:line.top+line.height,avgLeft:line.left});
+ }
+ return groups.sort((a,b)=>a.top-b.top||a.left-b.left);
+}
+function inferTextRole(line,medianHeight,index){
+ const relative=line.height/Math.max(1,medianHeight);
+ if(relative>=1.35||(line.top<state.height*.38&&relative>=1.12))return'headline';
+ if(relative<=.72||line.top>state.height*.82)return'caption';
+ return'body';
+}
+function makeDesignLayer(data){return{id:`design-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,visible:true,locked:false,zIndex:0,confidence:null,groupId:null,...data}}
+function parseDesignScene(){
+ if(!state.file||!state.width||!state.height){toast('先に画像を読み込んでください');return}
+ const layers=[],groups=[];let z=0;
+ layers.push(makeDesignLayer({id:'design-background',type:'background',role:'source',name:'元画像（参照背景）',geometry:{x:0,y:0,width:state.width,height:state.height},zIndex:z++,source:'uploaded-image',asset:state.file.name,locked:true,editable:false,confidence:1,notes:'元画像全体。文字・物体の分離後も参照用として保持します。'}));
+ const ocr=state.ocrLines.filter(x=>x.include&&x.text.trim());
+ const clusters=clusterOcrLines(ocr);const heights=ocr.map(x=>x.height).sort((a,b)=>a-b);const medianH=heights[Math.floor(heights.length/2)]||20;
+ clusters.forEach((cluster,gi)=>{
+  const groupId=cluster.items.length>1?`text-group-${gi+1}`:null;
+  if(groupId)groups.push({id:groupId,name:`テキストブロック ${String(gi+1).padStart(2,'0')}`,type:'group',children:[]});
+  cluster.items.forEach((line,li)=>{
+   const role=inferTextRole(line,medianH,li);const layer=makeDesignLayer({id:line.id||`ocr-layer-${gi}-${li}`,type:'text',role,name:role==='headline'?'見出しテキスト':role==='caption'?'補助テキスト':'本文テキスト',text:line.text,geometry:{x:line.left,y:line.top,width:line.width,height:line.height},zIndex:20+z++,groupId,source:'tesseract-ocr',confidence:Number(line.confidence)||0,style:{fontFamily:line.fontFamily||'Arial, sans-serif',fontSize:line.fontSize||Math.max(8,Math.round(line.height*.82)),fill:line.fill||'#202020'},editable:true,notes:'OCRの文字列・境界・座標から作成。フォントや文字装飾は推定値です。'});
+   layers.push(layer);if(groupId)groups.find(g=>g.id===groupId).children.push(layer.id);
+  });
+ });
+ const samBounds=maskBounds(state.lastSamMask);const manualCutoutGeometry=state.lastSamCutoutGeometry||samBounds;
+ if(manualCutoutGeometry&&state.lastSamCutoutBlob){layers.push(makeDesignLayer({id:'sam-object-1',type:'image',role:'object',name:'SAM抽出オブジェクト',geometry:{x:manualCutoutGeometry.x,y:manualCutoutGeometry.y,width:manualCutoutGeometry.width,height:manualCutoutGeometry.height},zIndex:10+z++,source:'slimsam-77',asset:'SAM_Object_Cutout.png',maskAsset:'SAM_Object_Mask.png',confidence:null,editable:true,notes:'SAMのマスクに基づく透過切り抜き。元画像側の背景を補完するまでは、位置を動かすと元の対象が背景に残ります。'}))}
+ state.samCandidates.filter(candidate=>candidate.include).forEach((candidate,index)=>{
+  const g=candidate.bounds;
+  layers.push(makeDesignLayer({id:`sam-auto-object-${index+1}`,type:'image',role:'object',name:`自動抽出オブジェクト ${String(index+1).padStart(2,'0')}`,geometry:{x:g.x,y:g.y,width:g.width,height:g.height},zIndex:12+z++,source:'slimsam-77-grid-prompts',asset:candidate.assetName,maskAsset:candidate.maskAssetName,confidence:candidate.score==null?null:candidate.score*100,editable:true,notes:'格子状の探索地点からSAMが提案した透明PNGレイヤー候補です。誤検出・未検出があり得るため、採否を確認してください。背景補完前に移動すると、元画像側に対象物が残ります。'}));
+ });
+ if(state.lastMattingBlob){layers.push(makeDesignLayer({id:'modnet-foreground-1',type:'image',role:'foreground',name:'MODNet前景レイヤー',geometry:{x:0,y:0,width:state.width,height:state.height},zIndex:5,source:'modnet',asset:'MODNet_foreground.png',editable:true,notes:'前景マット結果。対象物ごとの個別分離ではなく、前景全体の候補です。'}))}
+ if(state.lastInpaintBlob){layers.push(makeDesignLayer({id:'inpaint-background-1',type:'background',role:'restored-background',name:'背景補完結果',geometry:{x:0,y:0,width:state.width,height:state.height},zIndex:1,source:'lama-inpainting',asset:'LaMa_Inpainted.png',editable:true,notes:'補完済み画像全体。元画像と差し替えて背景として利用できます。'}))}
+ layers.sort((a,b)=>b.zIndex-a.zIndex);
+ state.designLayers=layers;state.designGroups=groups;state.designParsed=true;state.designSelectedId=layers.find(x=>x.type==='text')?.id||layers.find(x=>x.type==='image')?.id||layers[0]?.id||null;
+ renderDesignTree();updateDesignSourceSummary();drawPromptOverlay();
+ const objectCount=layers.filter(x=>x.type==='image').length,textCount=layers.filter(x=>x.type==='text').length;
+ const warnings=[];if(!ocr.length)warnings.push('OCR結果がないためテキストレイヤーは作成されていません');if(!samBounds&&!state.samCandidates.some(x=>x.include))warnings.push('SAMマスク／自動候補がないため独立した物体レイヤーは作成されていません');if(!state.lastMattingBlob)warnings.push('MODNet前景結果はありません');if(!state.lastInpaintBlob)warnings.push('補完済み背景はありません');
+ $('designParseWarning').textContent=warnings.length?'解析上の注意：'+warnings.join('。')+'。分類・グループ化・重なり順は検出情報と幾何ルールによる推定です。ツリーは前面が上、背景が下の順です。':'解析元の複数モジュールを統合しました。重なり順は推定値なので、必要に応じて手動で並べ替えてください。ツリーは前面が上、背景が下の順です。';
+ $('designLayerStat').textContent=layers.length;$('designTextStat').textContent=textCount;$('designObjectStat').textContent=objectCount;$('designGroupStat').textContent=groups.length;
+ $('exportDesignJsonBtn').disabled=false;$('clearDesignParseBtn').disabled=false;
+ log(`Design Parsing完了: ${layers.length}レイヤー候補 / テキスト ${textCount} / 画像・物体 ${objectCount} / グループ ${groups.length}`,'SUCCESS');
+ toast('レイヤー構造候補を作成しました');
+ updateCompositionControls();renderCompositionPreview();
+}
+function getCompositionLayerBlob(layer){
+ if(!layer)return null;
+ const candidate=state.samCandidates.find(item=>item.assetName===layer.asset);
+ if(candidate?.cutoutBlob)return candidate.cutoutBlob;
+ if(layer.asset==='SAM_Object_Cutout.png'&&state.lastSamCutoutBlob)return state.lastSamCutoutBlob;
+ if(layer.asset==='MODNet_foreground.png'&&state.lastMattingBlob)return state.lastMattingBlob;
+ if(layer.asset==='LaMa_Inpainted.png'&&state.lastInpaintBlob)return state.lastInpaintBlob;
+ return state.results.find(item=>item.name===layer.asset)?.blob||null;
+}
+async function decodeCompositionBlob(blob){
+ if(!blob)throw new Error('画像データがありません');
+ const cached=state.compositionAssetCache.get(blob);if(cached)return cached;
+ const promise=(async()=>{
+  if(typeof createImageBitmap==='function')return await createImageBitmap(blob);
+  const url=URL.createObjectURL(blob);
+  try{const image=new Image();image.decoding='async';image.src=url;await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('画像を読み込めませんでした'))});return image}
+  finally{URL.revokeObjectURL(url)}
+ })();
+ state.compositionAssetCache.set(blob,promise);
+ try{return await promise}catch(error){state.compositionAssetCache.delete(blob);throw error}
+}
+function clearCompositionAssetCache(){
+ state.compositionAssetCache.forEach(async promise=>{try{const image=await promise;if(image&&typeof image.close==='function')image.close()}catch{}});
+ state.compositionAssetCache.clear();
+}
+function updateCompositionControls(){
+ if(!$('compositionBase'))return;
+ const inpaintOption=$('compositionBase').querySelector('option[value="inpaint"]');
+ if(inpaintOption)inpaintOption.disabled=!state.lastInpaintBlob;
+ $('renderCompositionBtn').disabled=!state.designParsed||state.jobRunning;
+ $('exportCompositionBtn').disabled=!state.designParsed||state.jobRunning;
+ $('compositionCompareControl').classList.toggle('hidden',$('compositionMode').value!=='compare');
+}
+function wrapCompositionText(ctx,text,maxWidth){
+ const chars=Array.from(String(text||''));const lines=[];let line='';
+ for(const char of chars){const next=line+char;if(line&&ctx.measureText(next).width>maxWidth){lines.push(line);line=char}else line=next}
+ if(line)lines.push(line);return lines.length?lines:[''];
+}
+async function drawCompositionInto(canvas,scale,{compare=false,divider=50,exporting=false}={}){
+ const w=state.width,h=state.height;if(!w||!h)throw new Error('画像サイズが確定していません');
+ canvas.width=Math.max(1,Math.round(w*scale));canvas.height=Math.max(1,Math.round(h*scale));
+ const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)throw new Error('Canvasを初期化できません');
+ ctx.clearRect(0,0,canvas.width,canvas.height);ctx.save();ctx.scale(scale,scale);
+ const baseMode=state.compositionBaseMode;
+ let baseImage=null;
+ if(baseMode==='original')baseImage=await decodeCompositionBlob(state.file);
+ else if(baseMode==='inpaint'){
+  if(!state.lastInpaintBlob)throw new Error('背景補完画像がありません。LaMaで背景補完を実行してください');
+  baseImage=await decodeCompositionBlob(state.lastInpaintBlob);
+ }
+ if(baseImage)ctx.drawImage(baseImage,0,0,w,h);
+ const missing=[];
+ const layers=[...state.designLayers].filter(layer=>layer.visible&&layer.type!=='background'&&layer.role!=='source'&&layer.role!=='restored-background').sort((a,b)=>(Number(a.zIndex)||0)-(Number(b.zIndex)||0));
+ for(const layer of layers){
+  const g=layer.geometry||{x:0,y:0,width:w,height:h};
+  if(layer.type==='image'){
+   const blob=getCompositionLayerBlob(layer);
+   if(!blob){missing.push(layer.name||layer.id);continue}
+   try{const image=await decodeCompositionBlob(blob);ctx.drawImage(image,g.x,g.y,g.width,g.height)}catch(error){missing.push(layer.name||layer.id);log(`合成時に画像レイヤーを読み込めません: ${layer.name||layer.id} / ${error.message}`,'WARN')}
+  }else if(layer.type==='text'){
+   const style=layer.style||{};const fontSize=Math.max(6,Number(style.fontSize)||Math.max(8,g.height*.82));
+   const family=String(style.fontFamily||'Arial, sans-serif').replace(/[;{}]/g,'');const weight=layer.role==='headline'?'700':'500';
+   ctx.save();ctx.font=`${weight} ${fontSize}px ${family}`;ctx.fillStyle=style.fill||'#202020';ctx.textBaseline='top';ctx.textAlign='left';
+   const lines=wrapCompositionText(ctx,layer.text||'',Math.max(1,g.width));const lineHeight=fontSize*1.18;
+   lines.slice(0,Math.max(1,Math.floor(g.height/lineHeight)||1)).forEach((line,index)=>ctx.fillText(line,g.x,g.y+index*lineHeight,g.width));ctx.restore();
+  }else if(layer.type==='shape'){
+   ctx.save();ctx.strokeStyle=layer.style?.stroke||'#8ec720';ctx.lineWidth=Math.max(1,Number(layer.style?.strokeWidth)||2);ctx.strokeRect(g.x,g.y,g.width,g.height);ctx.restore();
+  }
+ }
+ ctx.restore();
+ if(compare){
+  const x=Math.round(canvas.width*Math.max(5,Math.min(95,divider))/100);
+  const source=await decodeCompositionBlob(state.file);ctx.save();ctx.beginPath();ctx.rect(0,0,x,canvas.height);ctx.clip();ctx.drawImage(source,0,0,canvas.width,canvas.height);ctx.restore();
+  ctx.save();ctx.strokeStyle='rgba(255,255,255,.96)';ctx.lineWidth=Math.max(2,Math.round(canvas.width/900));ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=5;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();ctx.restore();
+ }
+ state.compositionMissingAssets=missing;
+ return{missing,canvas};
+}
+async function renderCompositionPreview(){
+ const canvas=$('compositionCanvas');if(!canvas||!state.designParsed||!state.file)return;
+ const token=++state.compositionRenderToken;
+ $('compositionEmpty').classList.add('hidden');$('compositionStatusTag').textContent='描画中';$('renderCompositionBtn').disabled=true;$('exportCompositionBtn').disabled=true;
+ try{
+  const maxSide=2200,maxPixels=4_000_000;const scale=Math.min(1,maxSide/Math.max(state.width,state.height),Math.sqrt(maxPixels/(state.width*state.height)));
+  const compare=$('compositionMode').value==='compare';
+  const workCanvas=document.createElement('canvas');
+  const result=await drawCompositionInto(workCanvas,scale,{compare,divider:Number($('compositionDivider').value)||50});
+  if(token!==state.compositionRenderToken)return;
+  canvas.width=workCanvas.width;canvas.height=workCanvas.height;canvas.getContext('2d').drawImage(workCanvas,0,0);
+  $('compositionStatusTag').textContent=result.missing.length?`未読込 ${result.missing.length}件`:'プレビュー済み';
+  $('compositionFoot').textContent=result.missing.length?`読み込めない画像レイヤーがあります：${result.missing.join('、')}。元画像・抽出結果が残っているか確認してください。`:`${state.width.toLocaleString()} × ${state.height.toLocaleString()} px のレイヤー配置を表示中。${state.compositionBaseMode==='original'?'元画像を背景にしているため、切り抜いた対象は背景側にも残っています。':'背景とレイヤーを別々に表示しています。'} ${compare?'左側が元画像、右側が現在のレイヤー合成です。':''}`;
+  $('renderCompositionBtn').disabled=!state.designParsed||state.jobRunning;$('exportCompositionBtn').disabled=!state.designParsed||state.jobRunning||result.missing.length>0;
+ }catch(error){if(token!==state.compositionRenderToken)return;$('compositionStatusTag').textContent='描画エラー';$('compositionFoot').textContent=error.message;$('compositionEmpty').classList.remove('hidden');$('renderCompositionBtn').disabled=!state.designParsed||state.jobRunning;$('exportCompositionBtn').disabled=true;log('再合成プレビューに失敗: '+error.message,'ERROR')}
+}
+async function exportCompositionPng(){
+ if(!state.designParsed||!state.designLayers.length)return;
+ if(state.width*state.height>24_000_000){toast('元画像が大きいため、全解像度PNGの書き出しを中止しました。20MP以下の画像で試してください');return}
+ const button=$('exportCompositionBtn');button.disabled=true;button.textContent='PNG生成中…';
+ try{
+  const canvas=document.createElement('canvas');const result=await drawCompositionInto(canvas,1,{exporting:true});
+  if(result.missing.length)throw new Error('画像レイヤーを読み込めないため、完全な合成画像を書き出せません');
+  const blob=await new Promise((resolve,reject)=>canvas.toBlob(value=>value?resolve(value):reject(new Error('PNGを生成できませんでした')),'image/png'));
+  const name='AI_Layer_Lab_Reconstructed_Composite.png';addResult(name,blob,{width:state.width,height:state.height});
+  log(`再合成PNGを書き出しました: ${state.width}×${state.height}px / ${fmtBytes(blob.size)}`,'SUCCESS');toast('再合成PNGを書き出しました');
+ }catch(error){log('再合成PNG書き出しエラー: '+error.message,'ERROR');toast('PNGを書き出せませんでした。ログを確認してください')}
+ finally{button.textContent='合成PNGを書き出す';updateCompositionControls();renderCompositionPreview()}
+}
+
+function layerTypeLabel(type){return({background:'背景',text:'テキスト',image:'画像・物体',shape:'図形',group:'グループ',video:'動画',audio:'音声'})[type]||type}
+function renderDesignTree(){
+ const host=$('designTree');host.replaceChildren();if(!state.designLayers.length){host.innerHTML='<div class="design-empty">レイヤー候補がありません。</div>';return}
+ const iconMap={background:'▧',text:'T',image:'▣',shape:'◇',video:'▶',audio:'♫'};
+ const groupById=new Map(state.designGroups.map(g=>[g.id,g]));const renderedGroups=new Set();
+ state.designLayers.forEach(layer=>{
+  if(layer.groupId&&!renderedGroups.has(layer.groupId)){const group=groupById.get(layer.groupId);if(group){const wrapper=document.createElement('div');wrapper.className='design-group';const head=document.createElement('div');head.className='design-group-head';head.textContent='▾ '+group.name;wrapper.append(head);const children=document.createElement('div');children.style.display='grid';children.style.gap='6px';children.style.marginLeft='10px';state.designLayers.filter(x=>x.groupId===layer.groupId).forEach(child=>children.append(createDesignLayerRow(child)));wrapper.append(children);host.append(wrapper);renderedGroups.add(layer.groupId)}
+  }else if(!layer.groupId)host.append(createDesignLayerRow(layer));
+ });
+ updateDesignSourceSummary();renderDesignSelection();
+}
+function renderDesignSelection(){
+ const panel=$('designProperties');const layer=state.designLayers.find(x=>x.id===state.designSelectedId);if(!panel)return;if(!layer){panel.classList.add('hidden');return}panel.classList.remove('hidden');$('designSelectedType').textContent=layerTypeLabel(layer.type);const g=layer.geometry;$('designPropX').value=Math.round(g.x);$('designPropY').value=Math.round(g.y);$('designPropW').value=Math.round(g.width);$('designPropH').value=Math.round(g.height);$('designTextPropWrap').classList.toggle('hidden',layer.type!=='text');$('designPropText').value=layer.text||'';
+}
+function commitDesignGeometry(){const layer=state.designLayers.find(x=>x.id===state.designSelectedId);if(!layer)return;const x=Number($('designPropX').value),y=Number($('designPropY').value),w=Number($('designPropW').value),h=Number($('designPropH').value);if(![x,y,w,h].every(Number.isFinite)||w<1||h<1){toast('座標とサイズを正しく入力してください');renderDesignSelection();return}layer.geometry={x:Math.max(0,Math.min(state.width-1,x)),y:Math.max(0,Math.min(state.height-1,y)),width:Math.max(1,Math.min(state.width-Math.max(0,x),w)),height:Math.max(1,Math.min(state.height-Math.max(0,y),h))};renderDesignTree();drawPromptOverlay();renderCompositionPreview()}
+function createDesignLayerRow(layer){
+ const row=document.createElement('div');row.className='design-layer'+(state.designSelectedId===layer.id?' selected':'');row.dataset.layerId=layer.id;
+ const ico=document.createElement('div');ico.className='design-layer-icon';ico.textContent=iconMapForLayer(layer.type);
+ const main=document.createElement('div');main.className='design-layer-main';
+ const name=document.createElement('input');name.className='design-layer-name';name.value=layer.name;name.setAttribute('aria-label','レイヤー名');name.addEventListener('input',()=>{layer.name=name.value});
+ const meta=document.createElement('div');meta.className='design-layer-meta';const g=layer.geometry;meta.textContent=`${layerTypeLabel(layer.type)}${layer.role?` / ${({headline:'見出し',body:'本文',caption:'補助'})[layer.role]||layer.role}`:''} ・ X ${Math.round(g.x)} Y ${Math.round(g.y)} ・ ${Math.round(g.width)}×${Math.round(g.height)}px`+(layer.confidence!=null?` ・ ${Math.round(layer.confidence)}%`:'');
+ main.append(name,meta);
+ const type=document.createElement('select');type.className='design-layer-type';type.setAttribute('aria-label','レイヤー種別');['background','text','image','shape'].forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=layerTypeLabel(t);type.append(o)});type.value=['background','text','image','shape'].includes(layer.type)?layer.type:'image';type.disabled=layer.locked;type.addEventListener('change',()=>{layer.type=type.value;renderDesignTree();drawPromptOverlay();renderCompositionPreview()});
+ const actions=document.createElement('div');actions.className='design-layer-actions';
+ const include=document.createElement('label');const check=document.createElement('input');check.type='checkbox';check.checked=layer.visible;check.title='構造データに含める';check.addEventListener('change',()=>{layer.visible=check.checked;drawPromptOverlay();renderCompositionPreview()});include.append(check,document.createTextNode('含む'));
+ const up=document.createElement('button');up.className='btn small';up.textContent='↑';up.title='レイヤー順を上げる';up.disabled=layer.locked;up.addEventListener('click',()=>moveDesignLayer(layer.id,-1));
+ const down=document.createElement('button');down.className='btn small';down.textContent='↓';down.title='レイヤー順を下げる';down.disabled=layer.locked;down.addEventListener('click',()=>moveDesignLayer(layer.id,1));
+ actions.append(include,up,down);row.append(ico,main,type,actions);
+ row.addEventListener('click',e=>{if(e.target.closest('input,select,button,label'))return;state.designSelectedId=layer.id;renderDesignTree();drawPromptOverlay()});
+ return row;
+}
+function iconMapForLayer(type){return({background:'▧',text:'T',image:'▣',shape:'◇'})[type]||'◈'}
+function moveDesignLayer(id,delta){const index=state.designLayers.findIndex(x=>x.id===id);if(index<0)return;const target=index+delta;if(target<0||target>=state.designLayers.length||state.designLayers[target].locked)return;const [item]=state.designLayers.splice(index,1);state.designLayers.splice(target,0,item);state.designLayers.forEach((x,i)=>x.zIndex=state.designLayers.length-i);renderDesignTree();drawPromptOverlay();renderCompositionPreview()}
+function exportDesignJson(){
+ if(!state.designParsed||!state.designLayers.length)return;
+ const payload={schema:'ai-layer-lab.design-scene',version:2,createdAt:new Date().toISOString(),source:{fileName:state.file?.name||'',mimeType:state.file?.type||'',width:state.width,height:state.height,sourceIsFlattened:true},parser:{name:'AI Layer Lab Design Parser',method:'OCR/SAM point prompts (manual + sampled grid proposals)/MODNet/Inpainting result fusion + geometry heuristics',fullyLearnedLayoutModel:false,notes:['This is an editable structure proposal, not a pixel-perfect reconstruction.','Text styling and semantic roles are estimates.','The original image remains as a reference background.','Referenced image assets are exported separately from this JSON.','Automatic SAM candidates are sampled prompt proposals, not a semantic object detector; review inclusion before use.','Image objects are raster PNG layers; vector tracing is not part of this pipeline.','A composite preview can be exported as a raster PNG.','The original flattened image can remain as the base; use the inpainted background or transparency to inspect separated objects without original pixels underneath.']},groups:state.designGroups,elements:state.designLayers.map((x,index)=>({id:x.id,type:x.type,role:x.role||null,name:x.name,text:x.type==='text'?x.text:undefined,visible:x.visible,locked:x.locked,zIndex:state.designLayers.length-index,groupId:x.groupId,geometry:x.geometry,style:x.style||{},source:x.source,asset:x.asset||null,maskAsset:x.maskAsset||null,confidence:x.confidence,editable:x.editable!==false,notes:x.notes||''}))};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});downloadBlob(blob,'Design_Layer_Structure.json');addResult('Design_Layer_Structure.json',blob,{width:state.width,height:state.height});log(`レイヤー構造JSONを書き出しました: ${state.designLayers.length}要素`,'SUCCESS');toast('レイヤー構造JSONを保存しました');
+}
+
+['designPropX','designPropY','designPropW','designPropH'].forEach(id=>$(id).addEventListener('change',commitDesignGeometry));$('designPropText').addEventListener('input',()=>{const layer=state.designLayers.find(x=>x.id===state.designSelectedId);if(layer&&layer.type==='text'){layer.text=$('designPropText').value;renderCompositionPreview()}});
+function exportOcrSvg(){const lines=state.ocrLines.filter(x=>x.include&&x.text.trim());if(!lines.length)return;const nodes=lines.map(line=>`<text x="${line.left.toFixed(2)}" y="${(line.top+line.height*.82).toFixed(2)}" font-family="${escapeXml(line.fontFamily)}" font-size="${line.fontSize}" fill="${escapeXml(line.fill)}" data-ocr-confidence="${line.confidence.toFixed(1)}" data-source-id="${escapeXml(line.id)}">${escapeXml(line.text)}</text>`).join('\n');const svg=`<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${state.width}" height="${state.height}" viewBox="0 0 ${state.width} ${state.height}">
+<title>OCR editable text layers</title>
+${nodes}
+</svg>`;const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});downloadBlob(blob,'OCR_Text_Layers.svg');addResult('OCR_Text_Layers.svg',blob,{width:state.width,height:state.height});log(`SVGテキストレイヤーを書き出しました: ${lines.length}要素`,'SUCCESS')}
+function exportOcrJson(){const payload={schema:'ai-layer-lab.ocr-text-layers',version:1,source:{name:state.file?.name||'',width:state.width,height:state.height},language:$('ocrLanguage').value,createdAt:new Date().toISOString(),elements:state.ocrLines.map((x,index)=>({id:x.id,type:'text',name:`テキスト ${index+1}`,text:x.text,visible:x.include,geometry:{x:x.left,y:x.top,width:x.width,height:x.height},style:{fontFamily:x.fontFamily,fontSize:x.fontSize,fill:x.fill},confidence:x.confidence,editable:true}))};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});downloadBlob(blob,'OCR_Text_Layers.json');addResult('OCR_Text_Layers.json',blob,{width:state.width,height:state.height});log('OCRテキストレイヤーJSONを書き出しました','SUCCESS')}
+async function runMatting(){if(!state.file){toast('先に画像を読み込んでください');return}if(!state.libraryReady){toast('先にAIエンジンを初期化してください');return}if(state.jobRunning)return;$('licenseModal').classList.add('show')}
+async function executeMatting(){state.jobRunning=true;updateSamControls();updateOcrControls();$('runMattingBtn').disabled=true;$('runMattingBtn').textContent='AI処理中…';$('progressWrap').classList.remove('hidden');$('progressBar').style.width='4%';setPill('modnetStatus','モデル準備中','warn');log('MODNet前景抽出ジョブ開始');try{const requested=$('backendSelect').value;let backend=requested==='auto'?(navigator.gpu?'webgpu':'wasm'):requested;if(backend==='webgpu'&&!navigator.gpu)throw new Error('このブラウザーではWebGPUを利用できません。自動またはWASMを選択してください。');let result;try{result=await requestWorker('RUN_MODNET',{blob:state.file,backend,dtype:$('precisionSelect').value},600000)}catch(err){if(backend==='webgpu'&&requested==='auto'){log('WebGPU実行に失敗したためWASMへ切り替えます: '+err.message,'WARN');result=await requestWorker('RUN_MODNET',{blob:state.file,backend:'wasm',dtype:$('precisionSelect').value},600000)}else throw err}state.lastMattingBlob=result.blob;updateDesignSourceSummary();state.outputBlob=result.blob;state.outputUrl=URL.createObjectURL(result.blob);displayView('output');$('showOutputBtn').disabled=false;addResult('MODNet_foreground.png',result.blob,{width:result.width,height:result.height});setPill('modnetStatus','実行済み','good');$('progressBar').style.width='100%';log(`前景抽出完了: ${result.width}×${result.height}px`,'SUCCESS');toast('AI前景抽出が完了しました')}catch(err){log(err.message,'ERROR');setPill('modnetStatus','エラー','bad');toast('AI処理に失敗しました。ログを確認してください')}finally{state.jobRunning=false;updateSamControls();updateOcrControls();$('runMattingBtn').disabled=!state.file;$('runMattingBtn').textContent='この画像で実行';setTimeout(()=>$('progressWrap').classList.add('hidden'),900)}}
+$('loadOcrBtn').onclick=()=>$('ocrLicenseModal').classList.add('show');$('confirmOcrLoad').onclick=()=>{$('ocrLicenseModal').classList.remove('show');loadOcrEngine()};$('cancelOcrLoad').onclick=()=>$('ocrLicenseModal').classList.remove('show');$('ocrLicenseModal').addEventListener('click',e=>{if(e.target===$('ocrLicenseModal'))$('ocrLicenseModal').classList.remove('show')});$('runOcrBtn').onclick=runOcr;$('exportOcrSvgBtn').onclick=exportOcrSvg;$('exportOcrJsonBtn').onclick=exportOcrJson;$('ocrOverlayToggle').onchange=e=>{state.ocrOverlayVisible=e.target.checked;drawPromptOverlay()};$('ocrLanguage').onchange=async()=>{if(state.ocrWorker){try{await state.ocrWorker.terminate()}catch{}state.ocrWorker=null;state.ocrReady=false;setOcrStatus('未取得');resetOcrResults();updateOcrControls();log('OCR言語を変更しました。再度エンジンを準備してください','WARN')}};
+$('runDesignParseBtn').onclick=parseDesignScene;$('exportDesignJsonBtn').onclick=exportDesignJson;$('clearDesignParseBtn').onclick=()=>{resetDesignParsing();toast('レイヤー構造をクリアしました')};$('designOverlayToggle').onchange=e=>{state.designOverlayVisible=e.target.checked;drawPromptOverlay()};$('renderCompositionBtn').onclick=renderCompositionPreview;$('exportCompositionBtn').onclick=exportCompositionPng;$('compositionBase').onchange=e=>{state.compositionBaseMode=e.target.value;renderCompositionPreview()};$('compositionMode').onchange=e=>{state.compositionMode=e.target.value;updateCompositionControls();renderCompositionPreview()};$('compositionDivider').oninput=e=>{state.compositionDivider=Number(e.target.value)||50;$('compositionDividerValue').textContent=state.compositionDivider+'%';if(state.compositionMode==='compare')renderCompositionPreview()};
+$('loadInpaintBtn').onclick=()=> $('inpaintLicenseModal').classList.add('show');$('confirmInpaintLoad').onclick=()=>{$('inpaintLicenseModal').classList.remove('show');loadInpaintModel()};$('cancelInpaintLoad').onclick=()=> $('inpaintLicenseModal').classList.remove('show');$('inpaintLicenseModal').addEventListener('click',e=>{if(e.target===$('inpaintLicenseModal'))$('inpaintLicenseModal').classList.remove('show')});$('toggleMaskPaintBtn').onclick=toggleMaskPaint;$('clearInpaintMaskBtn').onclick=clearInpaintMask;$('maskFromOcrBtn').onclick=addOcrRegionsToMask;$('maskFromSamBtn').onclick=addSamMaskToInpaint;$('runInpaintBtn').onclick=runInpainting;$('exportInpaintMaskBtn').onclick=exportInpaintMask;$('maskBrushSize').oninput=updateInpaintControls;$('ocrMaskPadding').oninput=updateInpaintControls;$('maskGrowRadius').oninput=updateInpaintControls;$('maskPaintMode').onchange=e=>{state.inpaintMaskMode=e.target.value};$('inpaintMaskOverlay').onchange=e=>{state.inpaintMaskVisible=e.target.checked;drawPromptOverlay()};$('promptOverlay').addEventListener('pointerdown',startMaskStroke);$('promptOverlay').addEventListener('pointermove',moveMaskStroke);$('promptOverlay').addEventListener('pointerup',endMaskStroke);$('promptOverlay').addEventListener('pointercancel',endMaskStroke);
+$('loadSamBtn').onclick=()=>$('samLicenseModal').classList.add('show');$('confirmSamLoad').onclick=()=>{$('samLicenseModal').classList.remove('show');loadSam()};$('cancelSamLoad').onclick=()=>$('samLicenseModal').classList.remove('show');$('samLicenseModal').addEventListener('click',e=>{if(e.target===$('samLicenseModal'))$('samLicenseModal').classList.remove('show')});$('runSamAutoBtn').onclick=runSamAutoCandidates;$('samCandidateSelectAll').onclick=()=>{state.samCandidates.forEach(x=>x.include=true);renderSamCandidates();if(state.designParsed)parseDesignScene()};$('samCandidateSelectNone').onclick=()=>{state.samCandidates.forEach(x=>x.include=false);renderSamCandidates();if(state.designParsed)parseDesignScene()};$('selectSamBtn').onclick=toggleSamSelect;$('samPointType').onchange=e=>{state.samPointType=Number(e.target.value)};$('clearSamPointsBtn').onclick=()=>{state.samPoints=[];updateSamControls();drawPromptOverlay();log('SAMプロンプト点をクリアしました')};$('runSamBtn').onclick=runSam;$('previewImage').addEventListener('click',addSamPromptPoint);window.addEventListener('resize',drawPromptOverlay);
+$('chooseBtn').addEventListener('click',e=>{e.stopPropagation();$('fileInput').click()});$('dropzone').addEventListener('click',e=>{if(e.target.closest('button'))return;$('fileInput').click()});$('dropzone').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('fileInput').click()}});$('fileInput').addEventListener('change',e=>setImage(e.target.files?.[0]));$('dropzone').addEventListener('dragover',e=>{e.preventDefault();$('dropzone').classList.add('drag')});$('dropzone').addEventListener('dragleave',()=> $('dropzone').classList.remove('drag'));$('dropzone').addEventListener('drop',e=>{e.preventDefault();$('dropzone').classList.remove('drag');setImage(e.dataTransfer.files?.[0])});$('removeFileBtn').onclick=removeImage;$('diagnoseBtn').onclick=diagnose;$('runtimeTestBtn').onclick=diagnose;$('initBtn').onclick=loadLibrary;$('loadLibraryBtn').onclick=loadLibrary;$('runMattingBtn').onclick=runMatting;$('showInputBtn').onclick=()=>displayView('input');$('showOutputBtn').onclick=()=>displayView('output');$('confirmLicense').onclick=()=>{$('licenseModal').classList.remove('show');executeMatting()};$('cancelLicense').onclick=()=>$('licenseModal').classList.remove('show');$('licenseModal').addEventListener('click',e=>{if(e.target===$('licenseModal'))$('licenseModal').classList.remove('show')});$('checkerToggle').onchange=e=>$('previewBox').style.backgroundImage=e.target.checked?'':'none';$('clearLogBtn').onclick=()=>$('log').replaceChildren();$('stopWorkerBtn').onclick=()=>{if(state.worker){state.worker.terminate();state.worker=null;if(state.workerUrl){URL.revokeObjectURL(state.workerUrl);state.workerUrl=null}for(const [id,p] of state.workerPending){clearTimeout(p.timer);p.reject(new Error('Workerを停止しました'))}state.workerPending.clear();state.workerReady=false;state.libraryReady=false;state.samReady=false;state.inpaintReady=false;state.samPoints=[];updateSamControls();updateInpaintControls();setInpaintStatus('停止','warn');setPill('samStatus','停止','warn');setPill('samModelRegistryStatus','未取得','warn');setPill('libraryPill','停止','warn');setHeader('停止中');$('loadLibraryBtn').disabled=false;$('loadLibraryBtn').textContent='ライブラリを読み込む';$('runMattingBtn').disabled=true;log('Workerを終了しました','WARN')}if(state.ocrWorker){state.ocrWorker.terminate();state.ocrWorker=null;state.ocrReady=false;setOcrStatus('停止','warn');updateOcrControls();log('OCR Workerを終了しました','WARN')}};$('menuBtn').onclick=()=>$('sidebar').classList.toggle('open');document.querySelectorAll('.navbtn').forEach(b=>b.onclick=()=>{document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');const target=b.dataset.nav;const map={overview:'inputPanel',assets:'inputPanel',jobs:'log',outputs:'resultList',runtime:'runtimePanel',models:'modelPanel',pipeline:'designParsingTask'};$(map[target]||'inputPanel').scrollIntoView({behavior:'smooth',block:'start'});$('sidebar').classList.remove('open')});
+window.addEventListener('beforeunload',()=>{if(state.ocrWorker)state.ocrWorker.terminate();if(state.worker)state.worker.terminate();if(state.imageUrl)URL.revokeObjectURL(state.imageUrl);if(state.outputUrl)URL.revokeObjectURL(state.outputUrl);state.results.forEach(r=>URL.revokeObjectURL(r.url));if(state.workerUrl)URL.revokeObjectURL(state.workerUrl)});
+diagnose();renderSamCandidates();log('AI基盤UI起動。環境診断を完了しました。');log('次の順番: ライブラリ初期化 → 必要なAIタスク実行 → Design Parsingで結果を統合。');updateOcrControls();updateInpaintControls();updateDesignSourceSummary();
+})();
+</script>
+</body>
+</html>
