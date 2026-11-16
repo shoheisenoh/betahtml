@@ -7,43 +7,151 @@
 <title>Codespace HTML Finder</title>
 <style>
 :root{color-scheme:light;--bg:#f7f8f5;--panel:#fff;--soft:#f0f3eb;--text:#20241d;--muted:#72796c;--line:#dfe4d8;--accent:#88b92e;--dark:#52791b;--danger:#a33b3b;--shadow:rgba(32,36,29,.08);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text)}body{min-height:100vh}.wrap{width:min(920px,100%);margin:auto;padding:26px 18px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}.mark{width:44px;height:44px;border-radius:13px;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:800}.brand h1{font-size:clamp(20px,3vw,27px);margin:0}.brand p{margin:5px 0 0;color:var(--muted);font-size:14px}.tag{border:1px solid #d8e4ae;border-radius:999px;background:#edf3d9;color:var(--dark);padding:7px 10px;font-size:12px;font-weight:700}.card,.results,.preview{border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:0 8px 24px var(--shadow)}.card{padding:16px;margin-bottom:16px}.kicker{color:var(--muted);font-size:12px}.repo{font-size:22px;font-weight:700;margin-top:5px;overflow-wrap:anywhere}.detail{color:var(--muted);font-size:13px;margin-top:5px;line-height:1.55}.bar{display:flex;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--soft);border-bottom:1px solid var(--line)}.count{color:var(--dark);font-weight:700}.results{overflow:hidden}.items{padding:12px;display:grid;gap:9px}.item{display:flex;align-items:center;gap:11px;padding:11px;border:1px solid var(--line);border-radius:11px}.item.selected{border-color:var(--accent);box-shadow:0 0 0 3px #88b92e20}.filemark{flex:0 0 34px;height:34px;background:#eaf6c8;color:var(--dark);border-radius:9px;display:grid;place-items:center;font-weight:800}.fileinfo{min-width:0;flex:1}.filename{font-weight:700;overflow-wrap:anywhere}.filepath{font-size:12px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}.button,button{font:inherit;cursor:pointer}.item button,.action{border:1px solid var(--line);border-radius:9px;background:#fff;padding:8px 11px;font-weight:650}.item button:hover,.action:hover{border-color:var(--accent)}.preview{display:none;margin-top:16px;overflow:hidden}.preview.show{display:block}.preview-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}.preview-title{font-weight:700;overflow-wrap:anywhere}.actions{display:flex;gap:8px;flex-shrink:0}.action.primary{background:var(--accent);border-color:var(--accent);color:#fff}.action.primary:hover{background:var(--dark)}iframe{width:calc(100% - 24px);height:60vh;margin:12px;border:1px solid var(--line);border-radius:10px;background:#fff}.status{min-height:24px;margin-top:12px;color:var(--danger);font-size:14px;line-height:1.5}.note{font-size:13px;color:var(--muted);line-height:1.7}.note code{background:var(--soft);padding:2px 5px;border-radius:4px}.empty{padding:18px;color:var(--muted)}
-.page-shell{display:flex;flex-direction:column;min-height:100vh;background:var(--bg)}
-.toolbar{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.8);backdrop-filter:blur(8px);position:sticky;top:0;z-index:3}.toolbar .title{font-weight:700}.toolbar .link{padding:8px 10px;border-radius:9px;background:var(--soft);border:1px solid var(--line);text-decoration:none;color:var(--text)}.render-frame{width:100%;height:calc(100vh - 62px);border:0;background:#fff}.page-shell .toolbar .meta{color:var(--muted);font-size:12px}
-@media(max-width:600px){.wrap{padding:17px 11px 30px}.top{align-items:flex-start}.tag{font-size:10px}.brand p{font-size:12px}.repo{font-size:19px}.item{align-items:flex-start}.item button{padding:7px 9px}.preview-head{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions button{flex:1}.bar{padding:12px}.toolbar{padding:10px 12px}.toolbar .meta{display:none}}
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text)}body{min-height:100vh}.wrap{width:min(920px,100%);margin:auto;padding:26px 18px 40px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px}.mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#bcd95b);color:#fff;font-weight:900;font-size:20px;display:grid;place-items:center;box-shadow:0 10px 24px rgba(136,185,46,.24)}.brand h1{margin:0;font-size:clamp(20px,2.2vw,28px);letter-spacing:-.04em}.brand p{margin:4px 0 0;color:var(--muted);font-size:14px}.tag{padding:8px 12px;background:rgba(136,185,46,.12);border:1px solid rgba(136,185,46,.25);color:var(--dark);font-size:12px;font-weight:700;border-radius:999px}.card,.results,.preview{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 28px var(--shadow)}.card{padding:16px 18px 14px}.kicker{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.12em;text-transform:uppercase}.repo{margin-top:8px;font-size:clamp(20px,2.5vw,28px);font-weight:800;letter-spacing:-.04em;word-break:break-word}.detail{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.55}.results{margin-top:18px;overflow:hidden}.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;background:var(--soft);border-bottom:1px solid var(--line);font-size:14px}.count{color:var(--dark);font-weight:800}.items{padding:12px 12px 10px;display:grid;gap:10px}.item{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 10px;border:1px solid var(--line);background:#fff;border-radius:12px}.item.selected{border-color:rgba(136,185,46,.7);box-shadow:0 0 0 2px rgba(136,185,46,.12)}.filemark{width:34px;height:34px;border-radius:10px;background:#edf4d7;color:var(--dark);display:grid;place-items:center;font-weight:900;font-size:13px}.fileinfo{min-width:0}.filename{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.filepath{margin-top:3px;color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item button,.action{border:0;border-radius:10px;padding:9px 12px;font-weight:700;font-size:12px;background:var(--soft);color:var(--text);cursor:pointer}.item button:hover,.action:hover{filter:brightness(.98)}.preview{margin-top:18px;padding:14px;display:none}.preview.show{display:block}.preview-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:12px}.preview-title{font-size:14px;font-weight:800}.actions{display:flex;gap:8px}.action.primary{background:var(--accent);color:#fff}.frame-wrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#f5f5f5}.iframe{width:100%;height:70vh;border:0;display:block;background:#fff}.status{margin-top:14px;min-height:22px;color:var(--dark);font-size:13px;font-weight:600}.note{margin:18px 0 0;color:var(--muted);font-size:12px;line-height:1.7}.empty{padding:18px 12px;color:var(--muted);text-align:center;font-size:13px}.page-shell{display:flex;flex-direction:column;min-height:100vh;background:var(--bg)}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.8);backdrop-filter:blur(8px);position:sticky;top:0;z-index:10}.title{font-weight:800;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.meta{color:var(--muted);font-size:12px}.link{color:var(--dark);text-decoration:none;font-size:12px;font-weight:700}.render-frame{width:100%;height:calc(100vh - 64px);border:0;display:block;background:#fff}.@media(max-width:600px){.wrap{padding:17px 11px 30px}.top{align-items:flex-start}.tag{font-size:10px}.brand p{font-size:12px}.repo{font-size:19px}.item{align-items:flex-start}.item button{padding:7px 10px}.toolbar{flex-wrap:wrap}.meta{width:100%}.render-frame{height:calc(100vh - 120px)}}
 </style>
 </head>
 <body>
 <main class="wrap" id="finderRoot">
-  <header class="top"><div class="brand"><div class="mark">HTML</div><div><h1>Codespace HTML Finder</h1><p>リポジトリ内のHTMLを探して、名前を変えずに開く</p></div></div><div class="tag">公開リポジトリ対応</div></header>
-  <section class="card"><div class="kicker">Detected repository</div><div class="repo" id="repoName">リポジトリを確認しています…</div><div class="detail" id="repoDetail">URLからリポジトリ情報を判定します。</div></section>
-  <section class="results"><div class="bar"><strong>見つかったHTMLファイル</strong><span class="count" id="count">検索中…</span></div><div class="items" id="items"><div class="empty">コミット済みファイルを検索しています…</div></div></section>
-  <section class="preview" id="preview"><div class="preview-head"><div class="preview-title" id="previewTitle">プレビュー</div><div class="actions"><button class="action" id="closePreview" type="button">閉じる</button><button class="action primary" id="openFile" type="button">このHTMLを別タブで開く</button></div></div><iframe id="frame" sandbox="allow-scripts allow-forms allow-modals" title="HTMLプレビュー"></iframe></section>
+  <header class="top">
+    <div class="brand">
+      <div class="mark">HTML</div>
+      <div>
+        <h1>Codespace HTML Finder</h1>
+        <p>リポジトリ内のHTMLを探して、名前を変えずに開く</p>
+      </div>
+    </div>
+    <div class="tag">補助サーバー不要</div>
+  </header>
+
+  <section class="card">
+    <div class="kicker">Detected repository</div>
+    <div class="repo" id="repoName">リポジトリを確認しています…</div>
+    <div class="detail" id="repoDetail">URLからリポジトリ情報を自動判定します。</div>
+  </section>
+
+  <section class="results">
+    <div class="bar">
+      <strong>見つかったHTMLファイル</strong>
+      <span class="count" id="count">検索中…</span>
+    </div>
+    <div class="items" id="items">
+      <div class="empty">コミット済みファイルを検索しています…</div>
+    </div>
+  </section>
+
+  <section class="preview" id="preview">
+    <div class="preview-head">
+      <div class="preview-title" id="previewTitle">プレビュー</div>
+      <div class="actions">
+        <button class="action" id="closePreview" type="button">閉じる</button>
+        <button class="action primary" id="openFile" type="button">このHTMLを開く</button>
+      </div>
+    </div>
+    <div class="frame-wrap">
+      <iframe id="frame" class="iframe" sandbox="allow-scripts allow-forms allow-modals allow-popups" title="HTMLプレビュー"></iframe>
+    </div>
+  </section>
+
   <div class="status" id="status" role="status" aria-live="polite"></div>
-  <p class="note">このページはGitHub上のコミット済みHTMLを読み取り、選んだファイルをブラウザー内で表示します。リポジトリへのアップロードや書き換えはしません。公開リポジトリが対象です。GitHub PagesでこのFinderを開く場合はURLに <code>?repo=shoheisenoh/betahtml</code> と入れて、<code>&file=.../page.html</code> を付ければそのHTMLを即座に開けます。</p>
+  <p class="note">このページは GitHub 上のコミット済み HTML を読み取り、選んだファイルをブラウザー内で表示します。リポジトリへのアップロードや書き換えは行いません。</p>
 </main>
+
 <script>
 (() => {
   'use strict';
+
   const params = new URLSearchParams(location.search);
   const queryRepo = params.get('repo');
   const queryFile = params.get('file');
   const queryBranch = params.get('branch') || '';
-  const skipOwners = new Set(['login','logout','settings','organizations','orgs','codespaces','marketplace','features','enterprise','about','topics','collections','sponsors','notifications','new','pulls','issues','projects','search','explore','pricing','security']);
+  const skipOwners = new Set(['login','logout','settings','organizations','orgs','codespaces','marketplace','features','enterprise','about','topics','collections','sponsors','notifications','new','pulls','issues','projects','releases','discussions','marketplace','security','pricing','contact','team','collections','events','features','customer-stories']);
+
+  const state = { owner:'', repo:'', branch:'', files:[], selected:null, content:'' };
 
   function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+  }
+
+  function parseRepo(raw) {
+    if (!raw) return null;
+    try {
+      const u = new URL(raw);
+      const parts = u.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+      let owner = '', repo = '', branch = '';
+
+      if (['github.com','www.github.com'].includes(u.hostname)) {
+        owner = parts[0] || '';
+        repo = parts[1] || '';
+        const ti = parts.indexOf('tree');
+        if (ti >= 0) branch = parts[ti + 1] || '';
+      } else if (['github.dev','www.github.dev'].includes(u.hostname)) {
+        owner = parts[0] || '';
+        repo = parts[1] || '';
+        const ti = parts.indexOf('tree');
+        if (ti >= 0) branch = parts[ti + 1] || '';
+      } else if (u.hostname === 'vscode.dev') {
+        const gi = parts.indexOf('github');
+        if (gi >= 0) {
+          owner = parts[gi + 1] || '';
+          repo = parts[gi + 2] || '';
+        }
+        const ti = parts.indexOf('tree');
+        if (ti >= 0) branch = parts[ti + 1] || '';
+      }
+
+      repo = repo.replace(/\.git$/, '');
+      if (!owner || !repo || skipOwners.has(owner.toLowerCase())) return null;
+      return { owner, repo, branch, source: u.hostname };
+    } catch {
+      return null;
+    }
+  }
+
+  function detectContext() {
+    const urls = [location.href, document.referrer];
+    for (const raw of urls) {
+      const found = parseRepo(raw);
+      if (found) return found;
+    }
+
+    if (queryRepo) {
+      const parts = queryRepo.split('/').map(s => s.trim()).filter(Boolean);
+      if (parts.length === 2) {
+        return { owner: parts[0], repo: parts[1], branch: queryBranch, source: 'query string' };
+      }
+    }
+
+    const meta = document.querySelector('meta[name="github-repository"]');
+    if (meta) {
+      const match = meta.content.match(/^([^/]+)\/([^/]+)$/);
+      if (match) return { owner: match[1], repo: match[2], branch: '', source: 'repository metadata' };
+    }
+    return null;
+  }
+
+  function apiUrl(path, owner, repo) {
+    return `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${path}`;
+  }
+
+  async function github(owner, repo, path) {
+    const response = await fetch(apiUrl(path, owner, repo), {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.message || `GitHub API error ${response.status}`);
+    return data;
   }
 
   async function getDefaultBranch(owner, repo) {
-    const r = await fetch(`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, { headers: { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } });
-    const data = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(data.message || 'リポジトリ情報の取得に失敗しました。');
+    const data = await github(owner, repo, '');
     return data.default_branch || 'main';
   }
 
   function buildRawUrl(owner, repo, branch, filePath) {
-    const cleanFile = filePath.replace(/^\//, '');
+    const cleanFile = String(filePath || '').replace(/^\//, '');
     return `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${cleanFile}`;
   }
 
@@ -56,10 +164,72 @@
       : `<!doctype html><html><head>${tag}</head><body>${html}</body></html>`;
   }
 
+  function decodeBlob(base64) {
+    const binary = atob((base64 || '').replace(/\s/g, ''));
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  function renderList(files, selectedSha) {
+    const list = document.getElementById('items');
+    document.getElementById('count').textContent = `${files.length} 件`;
+    if (!files.length) {
+      list.innerHTML = '<div class="empty">このリポジトリにHTMLファイルはありません。</div>';
+      return;
+    }
+
+    list.innerHTML = files.map((file, i) => `
+      <article class="item ${selectedSha && selectedSha === file.sha ? 'selected' : ''}">
+        <div class="filemark">H</div>
+        <div class="fileinfo">
+          <div class="filename">${escapeHtml(file.name)}</div>
+          <div class="filepath">${escapeHtml(file.path)}</div>
+        </div>
+        <button type="button" data-index="${i}">表示</button>
+      </article>
+    `).join('');
+
+    list.querySelectorAll('[data-index]').forEach(button => {
+      button.addEventListener('click', () => selectFile(files[Number(button.dataset.index)]));
+    });
+  }
+
+  async function selectFile(file) {
+    state.selected = file;
+    document.getElementById('previewTitle').textContent = file.path;
+    document.getElementById('preview').classList.add('show');
+    document.getElementById('status').textContent = 'HTMLをGitHubから取得しています…';
+
+    try {
+      const blob = await github(state.owner, state.repo, `git/blobs/${encodeURIComponent(file.sha)}`);
+      if (blob.encoding !== 'base64') throw new Error('対応していないGit blob形式です。');
+      state.content = decodeBlob(blob.content);
+      document.getElementById('frame').srcdoc = injectBase(state.content, state.owner, state.repo, state.branch, file.path);
+      document.getElementById('status').textContent = '取得しました。別タブで開くと、このファイル名のままHTMLとして表示します。';
+      renderList(state.files, file.sha);
+    } catch (error) {
+      document.getElementById('status').textContent = `取得できませんでした：${error.message}`;
+      document.getElementById('preview').classList.remove('show');
+    }
+  }
+
+  function openSelected() {
+    if (!state.selected) return;
+
+    const next = new URL(location.href);
+    next.searchParams.set('repo', `${state.owner}/${state.repo}`);
+    next.searchParams.set('branch', state.branch);
+    next.searchParams.set('file', state.selected.path);
+    window.open(next.toString(), '_blank');
+    document.getElementById('status').textContent = '選択したHTMLを直接URLで開きました。';
+  }
+
   async function renderPagesFile() {
     if (!queryRepo || !queryFile) return false;
+
     const parts = queryRepo.split('/').map(s => s.trim()).filter(Boolean);
     if (parts.length !== 2) return false;
+
     const [owner, repo] = parts;
     const branch = queryBranch || await getDefaultBranch(owner, repo);
     const rawUrl = buildRawUrl(owner, repo, branch, queryFile);
@@ -76,9 +246,9 @@
     `;
 
     try {
-      const res = await fetch(rawUrl, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`ファイル取得に失敗しました (${res.status})`);
-      const html = await res.text();
+      const response = await fetch(rawUrl, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`ファイル取得に失敗しました (${response.status})`);
+      const html = await response.text();
       const iframe = document.getElementById('renderFrame');
       iframe.srcdoc = injectBase(html, owner, repo, branch, queryFile);
       return true;
@@ -87,126 +257,6 @@
       return true;
     }
   }
-
-  function parseRepo(raw) {
-    if (!raw) return null;
-    try {
-      const u = new URL(raw);
-      const parts = u.pathname.split('/').filter(Boolean).map(decodeURIComponent);
-      let owner = '', repo = '', branch = '';
-      if (['github.com','www.github.com'].includes(u.hostname)) {
-        owner = parts[0] || ''; repo = parts[1] || '';
-        const ti = parts.indexOf('tree'); if (ti >= 0) branch = parts[ti + 1] || '';
-      } else if (['github.dev','www.github.dev'].includes(u.hostname)) {
-        owner = parts[0] || ''; repo = parts[1] || '';
-        const ti = parts.indexOf('tree'); if (ti >= 0) branch = parts[ti + 1] || '';
-      } else if (u.hostname === 'vscode.dev') {
-        const gi = parts.indexOf('github');
-        if (gi >= 0) { owner = parts[gi + 1] || ''; repo = parts[gi + 2] || ''; }
-        const ti = parts.indexOf('tree'); if (ti >= 0) branch = parts[ti + 1] || '';
-      }
-      repo = repo.replace(/\.git$/, '');
-      if (!owner || !repo || skipOwners.has(owner.toLowerCase())) return null;
-      return { owner, repo, branch, source: u.hostname };
-    } catch {
-      return null;
-    }
-  }
-
-  function detectContext() {
-    const urls = [location.href, document.referrer];
-    for (const raw of urls) {
-      const found = parseRepo(raw);
-      if (found) return found;
-    }
-    const meta = document.querySelector('meta[name="github-repository"]');
-    if (meta) {
-      const m = meta.content.match(/^([^/]+)\/([^/]+)$/);
-      if (m) return { owner: m[1], repo: m[2], branch: '', source: 'repository metadata' };
-    }
-    return null;
-  }
-
-  function apiUrl(path, owner, repo) { return `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${path}`; }
-  async function github(owner, repo, path) {
-    const response = await fetch(apiUrl(path, owner, repo), { headers: { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || `GitHub API error ${response.status}`);
-    return data;
-  }
-
-  function decodeBlob(base64) {
-    const binary = atob((base64 || '').replace(/\s/g, ''));
-    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-    return new TextDecoder('utf-8').decode(bytes);
-  }
-
-  function renderList(files, selectedSha) {
-    const list = document.getElementById('items');
-    document.getElementById('count').textContent = `${files.length} 件`;
-    if (!files.length) {
-      list.innerHTML = '<div class="empty">このリポジトリにHTMLファイルはありません。</div>';
-      return;
-    }
-    list.innerHTML = files.map((file, i) => `
-      <article class="item ${selectedSha && selectedSha === file.sha ? 'selected' : ''}">
-        <div class="filemark">H</div>
-        <div class="fileinfo">
-          <div class="filename">${escapeHtml(file.name)}</div>
-          <div class="filepath">${escapeHtml(file.path)}</div>
-        </div>
-        <button type="button" data-index="${i}">表示</button>
-      </article>
-    `).join('');
-    list.querySelectorAll('[data-index]').forEach(button => {
-      button.addEventListener('click', () => selectFile(files[Number(button.dataset.index)]));
-    });
-  }
-
-  function htmlForPreview(content, filePath, owner, repo, branch) {
-    const folder = filePath.includes('/') ? filePath.slice(0, filePath.lastIndexOf('/') + 1) : '';
-    const base = `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${folder}`;
-    const tag = `<base href="${base}">`;
-    if (/<head(?:\s[^>]*)?>/i.test(content)) return content.replace(/<head(?:\s[^>]*)?>/i, match => `${match}${tag}`);
-    return `<!doctype html><html><head>${tag}</head><body>${content}</body></html>`;
-  }
-
-  async function selectFile(file) {
-    const owner = state.owner;
-    const repo = state.repo;
-    const branch = state.branch;
-    state.selected = file;
-    document.getElementById('previewTitle').textContent = file.path;
-    document.getElementById('preview').classList.add('show');
-    document.getElementById('status').textContent = 'HTMLをGitHubから取得しています…';
-    try {
-      const blob = await github(owner, repo, `git/blobs/${encodeURIComponent(file.sha)}`);
-      if (blob.encoding !== 'base64') throw new Error('対応していないGit blob形式です。');
-      const content = decodeBlob(blob.content);
-      state.content = content;
-      document.getElementById('frame').srcdoc = htmlForPreview(content, file.path, owner, repo, branch);
-      document.getElementById('status').textContent = '取得しました。別タブで開くと、このファイル名のままHTMLとして表示します。';
-      renderList(state.files, file.sha);
-    } catch (error) {
-      document.getElementById('status').textContent = `取得できませんでした：${error.message}`;
-      document.getElementById('preview').classList.remove('show');
-    }
-  }
-
-  function openSelected() {
-    if (!state.content || !state.selected) return;
-    const html = htmlForPreview(state.content, state.selected.path, state.owner, state.repo, state.branch);
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const win = window.open(url, '_blank');
-    if (!win) {
-      document.getElementById('status').textContent = 'ポップアップがブロックされました。サイトのポップアップ許可を有効にしてからもう一度押してください。';
-    } else {
-      document.getElementById('status').textContent = '選択したHTMLを別タブで開きました。これは一時的な表示です。';
-    }
-  }
-
-  const state = { owner:'', repo:'', branch:'', files:[], selected:null, content:'' };
 
   async function startFinder() {
     const ctx = detectContext();
@@ -218,20 +268,26 @@
       return;
     }
 
-    state.owner = ctx.owner; state.repo = ctx.repo; state.branch = ctx.branch;
+    state.owner = ctx.owner;
+    state.repo = ctx.repo;
+    state.branch = ctx.branch;
+
     document.getElementById('repoName').textContent = `${state.owner}/${state.repo}`;
     document.getElementById('repoDetail').textContent = `検出元：${ctx.source} · 公開リポジトリのコミット済みファイルを検索します。`;
 
     try {
-      const repo = await github(state.owner, state.repo, '');
-      if (!state.branch) state.branch = repo.default_branch || 'main';
+      const repoMeta = await github(state.owner, state.repo, '');
+      if (!state.branch) state.branch = repoMeta.default_branch || 'main';
       document.getElementById('repoDetail').textContent = `ブランチ：${state.branch} · 公開リポジトリのコミット済みファイル`;
+
       const tree = await github(state.owner, state.repo, `git/trees/${encodeURIComponent(state.branch)}?recursive=1`);
       if (!Array.isArray(tree.tree)) throw new Error('GitHubからファイル一覧を取得できませんでした。');
+
       state.files = tree.tree
         .filter(item => item.type === 'blob' && /\.html?$/i.test(item.path) && !/(^|\/)(node_modules|vendor|\.git)\//i.test(item.path))
         .map(item => ({ sha: item.sha, path: item.path, name: item.path.split('/').pop() }))
-        .sort((a,b) => a.path.localeCompare(b.path));
+        .sort((a, b) => a.path.localeCompare(b.path));
+
       renderList(state.files, null);
       if (state.files.length) await selectFile(state.files[0]);
       if (tree.truncated) document.getElementById('status').textContent += ' ファイル数が多いため、一覧が一部省略されています。';
