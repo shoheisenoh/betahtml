@@ -1,351 +1,120 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f7f8f5">
-<title>Codespace HTML Finder</title>
-<style>
-:root{color-scheme:light;--bg:#f7f8f5;--panel:#fff;--soft:#f0f3eb;--text:#20241d;--muted:#72796c;--line:#dfe4d8;--accent:#88b92e;--dark:#52791b;--danger:#a33b3b;--shadow:rgba(32,36,29,.08);font-family[...]
-*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text)}body{min-height:100vh}.wrap{width:min(920px,100%);margin:auto;padding:26px 18px 40px}.top{display:flex;justi[...]
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ページ一覧</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<main class="wrap" id="finderRoot">
-  <header class="top">
-    <div class="brand">
-      <div class="mark">HTML</div>
-      <div>
-        <h1>Codespace HTML Finder</h1>
-        <p>リポジトリ内のHTMLを探して、名前を変えずに開く</p>
-      </div>
-    </div>
-    <div class="tag">補助サーバー不要</div>
-  </header>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex items-center justify-center p-4">
 
-  <section class="card">
-    <div class="kicker">Detected repository</div>
-    <div class="repo" id="repoName">リポジトリを確認しています…</div>
-    <div class="detail" id="repoDetail">URLからリポジトリ情報を自動判定します。</div>
-  </section>
-
-  <section class="results">
-    <div class="bar">
-      <strong>見つかったHTMLファイル</strong>
-      <span class="count" id="count">検索中…</span>
-    </div>
-    <div class="items" id="items">
-      <div class="empty">コミット済みファイルを検索しています…</div>
-    </div>
-  </section>
-
-  <section class="preview" id="preview">
-    <div class="preview-head">
-      <div class="preview-title" id="previewTitle">プレビュー</div>
-      <div class="actions">
-        <button class="action" id="closePreview" type="button">閉じる</button>
-        <button class="action primary" id="openFile" type="button">このHTMLを開く</button>
-      </div>
-    </div>
-    <div class="frame-wrap">
-      <iframe id="frame" class="iframe" sandbox="allow-scripts allow-forms allow-modals allow-popups" title="HTMLプレビュー"></iframe>
-    </div>
-  </section>
-
-  <div class="status" id="status" role="status" aria-live="polite"></div>
-  <p class="note">このページは GitHub 上のコミット済み HTML を読み取り、選んだファイルをブラウザー内で表示します。リポジトリへのアップロードや書[...]
-</main>
-
-<script>
-(() => {
-  'use strict';
-
-  const params = new URLSearchParams(location.search);
-  const queryRepo = params.get('repo');
-  const queryFile = params.get('file');
-  const queryBranch = params.get('branch') || '';
-  const skipOwners = new Set([
-    'login','logout','settings','organizations','orgs','codespaces','marketplace','features','enterprise','about','topics','collections','sponsors','notifications','new','pulls','issues','projects','releases','explore','pricing','security','collections','events','team','teams','search','contact','features','customer-stories','readme','collections'
-  ]);
-
-  const state = { owner:'', repo:'', branch:'', files:[], selected:null, content:'' };
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-  }
-
-  function parseRepo(raw) {
-    if (!raw) return null;
-    try {
-      const u = new URL(raw);
-      const parts = u.pathname.split('/').filter(Boolean).map(decodeURIComponent);
-      const normalized = parts.filter(Boolean);
-      if (!normalized.length) return null;
-
-      let owner = '';
-      let repo = '';
-      let branch = '';
-
-      const githubHosts = new Set(['github.com', 'www.github.com', 'github.dev', 'www.github.dev']);
-      if (githubHosts.has(u.hostname)) {
-        owner = normalized[0] || '';
-        repo = normalized[1] || '';
-        if (normalized.includes('tree')) {
-          const ti = normalized.indexOf('tree');
-          branch = normalized[ti + 1] || '';
-        }
-        if (!branch && normalized.includes('blob')) {
-          const bi = normalized.indexOf('blob');
-          branch = normalized[bi + 1] || '';
-        }
-      } else if (u.hostname === 'vscode.dev') {
-        const gi = normalized.indexOf('github');
-        if (gi >= 0) {
-          owner = normalized[gi + 1] || '';
-          repo = normalized[gi + 2] || '';
-        }
-        if (normalized.includes('tree')) {
-          const ti = normalized.indexOf('tree');
-          branch = normalized[ti + 1] || '';
-        }
-        if (!branch && normalized.includes('blob')) {
-          const bi = normalized.indexOf('blob');
-          branch = normalized[bi + 1] || '';
-        }
-      }
-
-      repo = String(repo || '').replace(/\.git$/, '');
-      if (!owner || !repo || skipOwners.has(owner.toLowerCase())) return null;
-      return { owner, repo, branch, source: u.hostname };
-    } catch {
-      return null;
-    }
-  }
-
-  function findRepoFromMeta() {
-    const selectors = [
-      'meta[name="github-repository"]',
-      'meta[name="octolytics-dimension-repository_nwo"]',
-      'meta[property="og:site_name"]'
-    ];
-
-    for (const selector of selectors) {
-      const el = document.querySelector(selector);
-      if (!el) continue;
-      const content = el.content || el.getAttribute('content') || '';
-      if (content.includes('/')) {
-        const parts = content.split('/').map(s => s.trim()).filter(Boolean);
-        if (parts.length >= 2) {
-          const [owner, repo] = parts;
-          if (owner && repo && !skipOwners.has(owner.toLowerCase())) {
-            return { owner, repo, branch: '', source: 'repository metadata' };
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  function detectContext() {
-    const urls = [location.href, document.referrer];
-    for (const raw of urls) {
-      const found = parseRepo(raw);
-      if (found) return found;
-    }
-
-    if (queryRepo) {
-      const parts = queryRepo.split('/').map(s => s.trim()).filter(Boolean);
-      if (parts.length === 2) {
-        return { owner: parts[0], repo: parts[1], branch: queryBranch, source: 'query string' };
-      }
-    }
-
-    return findRepoFromMeta();
-  }
-
-  function apiUrl(path, owner, repo) {
-    return `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${path}`;
-  }
-
-  async function github(owner, repo, path) {
-    const response = await fetch(apiUrl(path, owner, repo), {
-      headers: {
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'User-Agent': 'codespace-html-finder'
-      }
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || `GitHub API error ${response.status}`);
-    return data;
-  }
-
-  async function getDefaultBranch(owner, repo) {
-    const data = await github(owner, repo, '');
-    return data.default_branch || 'main';
-  }
-
-  function buildRawUrl(owner, repo, branch, filePath) {
-    const cleanFile = String(filePath || '').replace(/^\//, '');
-    return `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${cleanFile}`;
-  }
-
-  function injectBase(html, owner, repo, branch, filePath) {
-    const folder = filePath.includes('/') ? filePath.slice(0, filePath.lastIndexOf('/') + 1) : '';
-    const base = `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${folder}`;
-    const tag = `<base href="${base}">`;
-    return /<head(?:\s[^>]*)?>/i.test(html)
-      ? html.replace(/<head(?:\s[^>]*)?>/i, match => `${match}${tag}`)
-      : `<!doctype html><html><head>${tag}</head><body>${html}</body></html>`;
-  }
-
-  function decodeBlob(base64) {
-    const binary = atob((base64 || '').replace(/\s/g, ''));
-    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-    return new TextDecoder('utf-8').decode(bytes);
-  }
-
-  function renderList(files, selectedSha) {
-    const list = document.getElementById('items');
-    document.getElementById('count').textContent = `${files.length} 件`;
-    if (!files.length) {
-      list.innerHTML = '<div class="empty">このリポジトリにHTMLファイルはありません。</div>';
-      return;
-    }
-
-    list.innerHTML = files.map((file, i) => `
-      <article class="item ${selectedSha && selectedSha === file.sha ? 'selected' : ''}">
-        <div class="filemark">H</div>
-        <div class="fileinfo">
-          <div class="filename">${escapeHtml(file.name)}</div>
-          <div class="filepath">${escapeHtml(file.path)}</div>
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
+        <!-- ヘッダー -->
+        <div class="bg-indigo-600 px-6 py-5 text-white">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                HTMLファイル一覧
+            </h1>
+            <p class="text-indigo-200 text-sm mt-1">同じフォルダ内にあるページ</p>
         </div>
-        <button type="button" data-index="${i}">表示</button>
-      </article>
-    `).join('');
 
-    list.querySelectorAll('[data-index]').forEach(button => {
-      button.addEventListener('click', () => selectFile(files[Number(button.dataset.index)]));
-    });
-  }
+        <!-- コンテンツエリア -->
+        <div class="p-6">
+            <!-- ローディング表示 -->
+            <div id="loading" class="flex flex-col items-center justify-center py-8">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-3"></div>
+                <p class="text-slate-500 text-sm">ファイル一覧を読み込んでいます...</p>
+            </div>
 
-  async function selectFile(file) {
-    state.selected = file;
-    document.getElementById('previewTitle').textContent = file.path;
-    document.getElementById('preview').classList.add('show');
-    document.getElementById('status').textContent = 'HTMLをGitHubから取得しています…';
+            <!-- エラー表示 -->
+            <div id="error-message" class="hidden bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-sm mb-4"></div>
 
-    try {
-      const blob = await github(state.owner, state.repo, `git/blobs/${encodeURIComponent(file.sha)}`);
-      if (blob.encoding !== 'base64') throw new Error('対応していないGit blob形式です。');
-      state.content = decodeBlob(blob.content);
-      document.getElementById('frame').srcdoc = injectBase(state.content, state.owner, state.repo, state.branch, file.path);
-      document.getElementById('status').textContent = '取得しました。別タブで開くと、このファイル名のままHTMLとして表示します。';
-      renderList(state.files, file.sha);
-    } catch (error) {
-      document.getElementById('status').textContent = `取得できませんでした：${error.message}`;
-      document.getElementById('preview').classList.remove('show');
-    }
-  }
-
-  function openSelected() {
-    if (!state.selected) return;
-
-    const next = new URL(location.href);
-    next.searchParams.set('repo', `${state.owner}/${state.repo}`);
-    next.searchParams.set('branch', state.branch);
-    next.searchParams.set('file', state.selected.path);
-    window.open(next.toString(), '_blank');
-    document.getElementById('status').textContent = '選択したHTMLを直接URLで開きました。';
-  }
-
-  async function renderPagesFile() {
-    if (!queryRepo || !queryFile) return false;
-
-    const parts = queryRepo.split('/').map(s => s.trim()).filter(Boolean);
-    if (parts.length !== 2) return false;
-
-    const [owner, repo] = parts;
-    const branch = queryBranch || await getDefaultBranch(owner, repo);
-    const rawUrl = buildRawUrl(owner, repo, branch, queryFile);
-
-    document.body.innerHTML = `
-      <div class="page-shell">
-        <div class="toolbar">
-          <div class="title">${escapeHtml(repo)} / ${escapeHtml(queryFile)}</div>
-          <div class="meta">${escapeHtml(owner)}/${escapeHtml(repo)} · ${escapeHtml(branch)}</div>
-          <a class="link" href="${location.origin + location.pathname}?repo=${encodeURIComponent(owner + '/' + repo)}&branch=${encodeURIComponent(branch)}">Finderに戻る</a>
+            <!-- ファイルリスト -->
+            <ul id="html-list" class="space-y-2.5 hidden">
+                <!-- JavaScriptでここに動的に追加されます -->
+            </ul>
         </div>
-        <iframe id="renderFrame" class="render-frame" title="Rendered content" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>
-      </div>
-    `;
+        
+        <!-- フッター -->
+        <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 flex justify-between items-center">
+            <span class="text-xs text-slate-400">GitHub Pages API</span>
+            <span id="file-count" class="text-xs font-medium text-slate-500"></span>
+        </div>
+    </div>
 
-    try {
-      const response = await fetch(rawUrl, { cache: 'no-store' });
-      if (!response.ok) throw new Error(`ファイル取得に失敗しました (${response.status})`);
-      const html = await response.text();
-      const iframe = document.getElementById('renderFrame');
-      iframe.srcdoc = injectBase(html, owner, repo, branch, queryFile);
-      return true;
-    } catch (error) {
-      document.body.innerHTML = `<div style="padding:24px;font-family:system-ui;color:#a33b3b;">${escapeHtml(error.message)}</div>`;
-      return true;
-    }
-  }
+    <!-- スクリプト -->
+    <script>
+        async function loadHtmlFiles() {
+            const hostname = window.location.hostname; // 例: username.github.io
+            const pathname = window.location.pathname;   // 例: /repo-name/index.html
 
-  async function startFinder() {
-    const ctx = detectContext();
-    if (!ctx) {
-      document.getElementById('repoName').textContent = 'リポジトリを判定できません';
-      document.getElementById('repoDetail').textContent = 'GitHub上のURLから開くか、URLに ?repo=所有者/リポジトリ を付けてください。';
-      document.getElementById('items').innerHTML = '<div class="empty">例：?repo=shoheisenoh/betahtml</div>';
-      document.getElementById('count').textContent = '—';
-      return;
-    }
+            const username = hostname.split('.')[0];
+            const pathSegments = pathname.split('/').filter(Boolean);
+            const repoName = pathSegments[0] || '';
+            const subPath = pathSegments.slice(1, -1).join('/');
 
-    state.owner = ctx.owner;
-    state.repo = ctx.repo;
-    state.branch = ctx.branch;
+            const apiUrl = `https://api.github.com/repos/${username}/${repoName}/contents/${subPath}`;
 
-    document.getElementById('repoName').textContent = `${state.owner}/${state.repo}`;
-    document.getElementById('repoDetail').textContent = `検出元：${ctx.source} · 公開リポジトリのコミット済みファイルを検索します。`;
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error-message');
+            const listEl = document.getElementById('html-list');
+            const countEl = document.getElementById('file-count');
 
-    try {
-      const repoMeta = await github(state.owner, state.repo, '');
-      if (!state.branch) state.branch = repoMeta.default_branch || 'main';
-      document.getElementById('repoDetail').textContent = `ブランチ：${state.branch} · 公開リポジトリのコミット済みファイル`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('ファイル一覧の取得に失敗しました。リポジトリの公開設定やURLを確認してください。');
+                }
 
-      const tree = await github(state.owner, state.repo, `git/trees/${encodeURIComponent(state.branch)}?recursive=1`);
-      if (!Array.isArray(tree.tree)) throw new Error('GitHubからファイル一覧を取得できませんでした。');
+                const files = await response.json();
+                loadingEl.classList.add('hidden');
+                
+                // 現在開いているファイル名（自分自身を除外するため）
+                const currentFileName = pathname.split('/').pop() || 'index.html';
+                let htmlFilesCount = 0;
 
-      state.files = tree.tree
-        .filter(item => item.type === 'blob' && /\.(html?|xhtml)$/i.test(item.path) && !/(^|\/)(node_modules|vendor|\.git)\//i.test(item.path))
-        .map(item => ({ sha: item.sha, path: item.path, name: item.path.split('/').pop() }))
-        .sort((a, b) => a.path.localeCompare(b.path));
+                files.forEach(file => {
+                    // .htmlファイルかつ自分自身以外を対象にする
+                    if (file.type === 'file' && file.name.endsWith('.html') && file.name !== currentFileName) {
+                        htmlFilesCount++;
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <a href="${file.name}" class="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group shadow-sm">
+                                <span class="font-medium text-slate-700 group-hover:text-indigo-600 flex items-center gap-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 group-hover:text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    ${file.name}
+                                </span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-300 group-hover:text-indigo-500 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        `;
+                        listEl.appendChild(li);
+                    }
+                });
 
-      renderList(state.files, null);
-      if (state.files.length) await selectFile(state.files[0]);
-      if (tree.truncated) document.getElementById('status').textContent += ' ファイル数が多いため、一覧が一部省略されています。';
-    } catch (error) {
-      document.getElementById('items').innerHTML = `<div class="empty">検索に失敗しました：${escapeHtml(error.message)}</div>`;
-      document.getElementById('status').textContent = '公開リポジトリであることと、GitHub APIへの接続を確認してください。';
-    }
-  }
+                if (htmlFilesCount === 0) {
+                    listEl.innerHTML = `<li class="text-center py-8 text-slate-400 text-sm">ほかのHTMLファイルは見つかりませんでした。</li>`;
+                }
 
-  async function main() {
-    const rendered = await renderPagesFile();
-    if (rendered) return;
-    startFinder();
-  }
+                listEl.classList.remove('hidden');
+                countEl.textContent = `${htmlFilesCount} 件のファイル`;
 
-  document.getElementById('openFile').addEventListener('click', openSelected);
-  document.getElementById('closePreview').addEventListener('click', () => {
-    document.getElementById('preview').classList.remove('show');
-    document.getElementById('frame').srcdoc = '';
-  });
+            } catch (error) {
+                loadingEl.classList.add('hidden');
+                errorEl.textContent = error.message;
+                errorEl.classList.remove('hidden');
+                countEl.textContent = 'エラー';
+            }
+        }
 
-  main();
-})();
-</script>
+        // 実行
+        loadHtmlFiles();
+    </script>
 </body>
 </html>
