@@ -64,7 +64,9 @@
   const queryRepo = params.get('repo');
   const queryFile = params.get('file');
   const queryBranch = params.get('branch') || '';
-  const skipOwners = new Set(['login','logout','settings','organizations','orgs','codespaces','marketplace','features','enterprise','about','topics','collections','sponsors','notifications','new','pulls','issues','projects','releases','discussions','marketplace','security','pricing','contact','team','collections','events','features','customer-stories']);
+  const skipOwners = new Set([
+    'login','logout','settings','organizations','orgs','codespaces','marketplace','features','enterprise','about','topics','collections','sponsors','notifications','new','pulls','issues','projects','releases','discussions','security','pricing','contact','team','events','customer-stories'
+  ]);
 
   const state = { owner:'', repo:'', branch:'', files:[], selected:null, content:'' };
 
@@ -77,14 +79,16 @@
     try {
       const u = new URL(raw);
       const parts = u.pathname.split('/').filter(Boolean).map(decodeURIComponent);
-      let owner = '', repo = '', branch = '';
+      let owner = '';
+      let repo = '';
+      let branch = '';
 
-      if (['github.com','www.github.com'].includes(u.hostname)) {
+      if (['github.com', 'www.github.com'].includes(u.hostname)) {
         owner = parts[0] || '';
         repo = parts[1] || '';
         const ti = parts.indexOf('tree');
         if (ti >= 0) branch = parts[ti + 1] || '';
-      } else if (['github.dev','www.github.dev'].includes(u.hostname)) {
+      } else if (['github.dev', 'www.github.dev'].includes(u.hostname)) {
         owner = parts[0] || '';
         repo = parts[1] || '';
         const ti = parts.indexOf('tree');
