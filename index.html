@@ -6,125 +6,296 @@
 <meta name="theme-color" content="#f7f8f5">
 <title>Codespace HTML Finder</title>
 <style>
-:root{color-scheme:light;--bg:#f7f8f5;--panel:#fff;--panel2:#f0f3eb;--text:#20241d;--muted:#72796c;--line:#dfe4d8;--accent:#88b92e;--accent-dark:#52791b;--danger:#b34848;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--text)}button{font:inherit;color:inherit;cursor:pointer}.wrap{width:min(980px,100%);margin:auto;padding:26px 20px 42px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid #cbd8b7;border-radius:13px;background:#edf5df;color:var(--accent-dark);font-weight:850}.brand h1{margin:0;font-size:19px;letter-spacing:-.35px}.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}.tag{padding:7px 10px;border:1px solid var(--line);border-radius:99px;background:var(--panel);font-size:11px;color:#59634f;white-space:nowrap}.tag:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:7px}.repo-card,.results,.preview{background:var(--panel);border:1px solid var(--line);border-radius:17px;overflow:hidden}.repo-card{padding:15px 17px;margin-bottom:14px}.repo-kicker{font-size:10px;letter-spacing:.07em;color:var(--muted);text-transform:uppercase}.repo-name{margin-top:5px;font-size:15px;font-weight:750;overflow-wrap:anywhere}.repo-detail{margin-top:5px;font-size:11px;color:var(--muted)}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 17px;border-bottom:1px solid var(--line)}.bar strong{font-size:13px}.count{font-size:11px;color:var(--muted)}.items{padding:5px 10px}.item{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:11px;padding:10px 8px;border-bottom:1px solid #edf0e9}.item:last-child{border-bottom:0}.filemark{width:34px;height:34px;border-radius:10px;background:var(--panel2);color:var(--accent-dark);display:grid;place-items:center;font-size:12px;font-weight:800}.fileinfo{min-width:0}.filename{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.filepath{margin-top:4px;font-size:11px;color:var(--muted);overflow-wrap:anywhere}.actions{display:flex;gap:6px;align-items:center}.btn{min-height:34px;padding:0 11px;border:1px solid #d8dfd0;border-radius:9px;background:#fff;font-size:11px;white-space:nowrap}.btn:hover{background:var(--panel2)}.btn.primary{background:var(--accent);border-color:#719b29;color:#17220a;font-weight:750}.btn.primary:hover{background:#98c943}.item.selected{background:#f8fbf2}.empty,.loading,.error{padding:30px 16px;text-align:center;font-size:13px;color:var(--muted);line-height:1.7}.error{color:var(--danger)}.preview{margin-top:14px;display:none}.preview.show{display:block}.preview-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}.preview-title{min-width:0;font-size:12px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.preview-actions{display:flex;gap:6px}.frame-wrap{height:min(65vh,680px);background:#fff}.frame-wrap iframe{width:100%;height:100%;border:0;background:#fff}.status{padding:12px 2px 0;min-height:32px;font-size:11px;line-height:1.6;color:var(--muted)}.foot{margin-top:14px;font-size:11px;line-height:1.7;color:var(--muted)}button:focus-visible{outline:3px solid #a8cb70;outline-offset:2px}
-@media(max-width:620px){.wrap{padding:18px 11px 30px}.top{align-items:flex-start}.brand h1{font-size:17px}.tag{font-size:10px;padding:6px 8px}.repo-card{padding:13px}.bar{padding:12px 13px}.items{padding:4px 7px}.item{grid-template-columns:30px minmax(0,1fr);gap:9px}.filemark{width:30px;height:30px}.actions{grid-column:2}.btn{min-height:32px}.preview-head{align-items:flex-start;flex-wrap:wrap}.preview-actions{margin-left:auto}.frame-wrap{height:58vh}}
+:root{color-scheme:light;--bg:#f7f8f5;--panel:#fff;--panel2:#f0f3eb;--text:#20241d;--muted:#72796c;--line:#dfe4d8;--accent:#88b92e;--accent-dark:#52791b;--danger:#b34848;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:var(--bg);color:var(--text)}body{min-height:100vh}button{font:inherit;color:inherit;cursor:pointer}.wrap{width:min(980px,100%);margin:auto;padding:26px 20px 36px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px}.mark{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#a7d652);display:grid;place-items:center;color:#fff;font-weight:800;letter-spacing:.08em}.brand h1{margin:0;font-size:clamp(20px,2.7vw,28px);line-height:1.2}.brand p{margin:6px 0 0;color:var(--muted);font-size:14px}.tag{padding:8px 12px;border-radius:999px;background:#edf3d9;color:var(--accent-dark);font-size:12px;font-weight:700;border:1px solid #d8e4ae}.repo-card,.results,.preview{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 24px rgba(42,48,38,.04)}.repo-card{padding:18px 18px 16px;margin-bottom:18px}.repo-kicker{color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase}.repo-name{margin-top:8px;font-size:clamp(18px,2vw,30px);font-weight:700;word-break:break-word}.repo-detail{margin-top:6px;color:var(--muted);font-size:14px;line-height:1.5}.results{overflow:hidden}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line);background:var(--panel2);font-size:14px}.count{font-weight:700;color:var(--accent-dark)}.items{padding:12px 12px 6px;display:grid;gap:10px}.item{display:flex;align-items:center;gap:12px;padding:12px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}.item:hover{border-color:#bfd06d;transform:translateY(-1px)}.item.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(136,185,46,.12)}.filemark{flex:0 0 36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#eaf6c8,#d5ed8c);display:grid;place-items:center;font-weight:800;color:var(--accent-dark)}.fileinfo{flex:1;min-width:0}.filename{font-weight:700;word-break:break-word}.filepath{font-size:12px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.item button{margin-left:auto;padding:8px 12px;border:none;border-radius:999px;background:var(--accent);color:#fff;font-weight:700}.item button:hover{background:var(--accent-dark)}.loading,.empty,.error{padding:20px 12px;color:var(--muted);font-size:14px}.preview{display:none;margin-top:18px;background:linear-gradient(180deg,#fff,#fbfaf6)}.preview.show{display:block}.preview-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}.preview-title{font-weight:700}.preview-actions{display:flex;align-items:center;gap:8px}.btn{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--text);font-weight:600}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark)}.frame-wrap{padding:14px;background:#fff}.frame-wrap iframe{width:100%;min-height:60vh;border:1px solid var(--line);border-radius:12px;display:block;background:#fff}.status{margin-top:16px;min-height:22px;color:var(--danger);font-size:14px;line-height:1.5}.foot{margin-top:16px;color:var(--muted);font-size:13px;line-height:1.7}.foot b{color:var(--text)} @media(max-width:620px){.wrap{padding:18px 11px 30px}.top{align-items:flex-start}.brand{align-items:flex-start}.brand p{font-size:12px}.tag{font-size:10px;padding:6px 8px}.repo-card{padding:13px}.bar{padding:12px 13px}.item{padding:10px}.item button{padding:7px 10px}.frame-wrap{padding:10px}.preview-head{padding:12px 13px}.preview-title{font-size:14px}} 
 </style>
 </head>
 <body>
 <main class="wrap">
   <header class="top">
-    <div class="brand"><div class="mark">HTML</div><div><h1>Codespace HTML Finder</h1><p>同じリポジトリのコミット済みHTMLを自動検索</p></div></div>
+    <div class="brand">
+      <div class="mark">HTML</div>
+      <div>
+        <h1>Codespace HTML Finder</h1>
+        <p>同じリポジトリのコミット済みHTMLを自動検索</p>
+      </div>
+    </div>
     <div class="tag">補助サーバー不要</div>
   </header>
+
   <section class="repo-card">
     <div class="repo-kicker">Detected repository</div>
     <div class="repo-name" id="repoName">リポジトリを確認しています…</div>
     <div class="repo-detail" id="repoDetail">現在のリンクからリポジトリ情報を自動判定します。</div>
   </section>
+
   <section class="results">
     <div class="bar"><strong>見つかったHTMLファイル</strong><span class="count" id="count">検索中…</span></div>
     <div class="items" id="items"><div class="loading">同じリポジトリのコミット済みファイルを検索しています…</div></div>
   </section>
+
   <section class="preview" id="preview">
-    <div class="preview-head"><div class="preview-title" id="previewTitle">プレビュー</div><div class="preview-actions"><button class="btn primary" id="saveIndex">index.htmlとして保存</button><button class="btn" id="closePreview">閉じる</button></div></div>
+    <div class="preview-head">
+      <div class="preview-title" id="previewTitle">プレビュー</div>
+      <div class="preview-actions">
+        <button class="btn" id="closePreview" type="button">閉じる</button>
+        <button class="btn primary" id="saveIndex" type="button">index.htmlとして保存</button>
+      </div>
+    </div>
     <div class="frame-wrap"><iframe id="frame" sandbox="allow-scripts allow-forms allow-modals" title="HTMLプレビュー"></iframe></div>
   </section>
+
   <div class="status" id="status" role="status" aria-live="polite"></div>
-  <p class="foot">検索対象は検出したリポジトリのコミット済みファイルだけです。候補の中から自動で最有力のHTMLを選び、内容を <b>index.html</b> として保存できます。未コミット・未保存ファイルは対象外です。プライベートリポジトリは、ブラウザーだけではGitHub APIの認証を引き継げない場合があります。</p>
+  <p class="foot">検索対象は検出したリポジトリのコミット済みファイルだけです。候補の中から最有力のHTMLを選び、内容を <b>index.html</b> として保存すれば、ブラウザでそのまま開けるように整えます。相対パスの参照がある場合も <b>base href</b> を補って表示を保ちます。</p>
 </main>
+
 <script>
-(()=>{
-'use strict';
-const $=id=>document.getElementById(id);
-const state={owner:'',repo:'',branch:'',files:[],selected:null,content:''};
-const API='https://api.github.com';
-const skipOwners=new Set(['login','logout','settings','organizations','orgs','codespaces','marketplace','features','enterprise','about','topics','collections','sponsors','notifications','new','pulls','issues','dashboard','explore','site','account','pricing']);
-function parseRepo(raw){
-  if(!raw)return null;
-  try{
-    const u=new URL(raw);let p=u.pathname.split('/').filter(Boolean).map(decodeURIComponent);let owner='',repo='',branch='';
-    if(u.hostname==='github.dev'||u.hostname==='www.github.dev'){
-      owner=p[0]||'';repo=p[1]||'';
-      const ti=p.indexOf('tree');if(ti>=0&&p[ti+1])branch=p[ti+1];
-    }else if(u.hostname==='vscode.dev'){
-      const gi=p.indexOf('github');if(gi>=0){owner=p[gi+1]||'';repo=p[gi+2]||'';const ti=p.indexOf('tree');if(ti>=0&&p[ti+1])branch=p[ti+1];}
-    }else if(u.hostname==='github.com'||u.hostname==='www.github.com'){
-      owner=p[0]||'';repo=p[1]||'';
-      const ti=p.indexOf('tree');if(ti>=0&&p[ti+1])branch=p[ti+1];
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const state = { owner:'', repo:'', branch:'', files:[], selected:null, content:'' };
+  const API = 'https://api.github.com';
+  const skipOwners = new Set([
+    'login','logout','settings','organizations','orgs','codespaces','marketplace','features','enterprise','about','topics','collections',
+    'sponsors','notifications','new','pulls','issues','projects','search','explore','pricing','security','customer-stories','events','readme'
+  ]);
+
+  function parseRepo(raw) {
+    if (!raw) return null;
+    try {
+      const u = new URL(raw);
+      const p = u.pathname.split('/').filter(Boolean).map(decodeURIComponent);
+      let owner = '';
+      let repo = '';
+      let branch = '';
+
+      if (u.hostname === 'github.dev' || u.hostname === 'www.github.dev') {
+        owner = p[0] || '';
+        repo = p[1] || '';
+        const ti = p.indexOf('tree');
+        if (ti >= 0 && p[ti + 1]) branch = p[ti + 1];
+      } else if (u.hostname === 'vscode.dev') {
+        const gi = p.indexOf('github');
+        if (gi >= 0) {
+          owner = p[gi + 1] || '';
+          repo = p[gi + 2] || '';
+          const ti = p.indexOf('tree');
+          if (ti >= 0 && p[ti + 1]) branch = p[ti + 1];
+        }
+      } else if (u.hostname === 'github.com' || u.hostname === 'www.github.com') {
+        owner = p[0] || '';
+        repo = p[1] || '';
+        const ti = p.indexOf('tree');
+        if (ti >= 0 && p[ti + 1]) branch = p[ti + 1];
+      }
+
+      repo = (repo || '').replace(/\.git$/, '');
+      if (!owner || !repo || skipOwners.has(owner.toLowerCase())) return null;
+      return { owner, repo, branch, source: u.hostname };
+    } catch {
+      return null;
     }
-    repo=repo.replace(/\.git$/,'');
-    if(!owner||!repo||skipOwners.has(owner.toLowerCase()))return null;
-    return {owner,repo,branch,source:u.hostname};
-  }catch{return null;}
-}
-function detectContext(){
-  const urls=[location.href,document.referrer];
-  for(const raw of urls){const found=parseRepo(raw);if(found)return found;}
-  // Optional repository metadata can be embedded by a GitHub-hosted wrapper.
-  const meta=document.querySelector('meta[name="github-repository"]');
-  if(meta){const m=meta.content.match(/^([^/]+)\/([^/]+)$/);if(m)return {owner:m[1],repo:m[2],branch:'',source:'repository metadata'};}
-  return null;
-}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function apiUrl(path){return `${API}/repos/${encodeURIComponent(state.owner)}/${encodeURIComponent(state.repo)}/${path}`;}
-async function github(path){
-  const r=await fetch(apiUrl(path),{headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
-  const data=await r.json().catch(()=>({}));
-  if(!r.ok){let message=data.message||`GitHub API error ${r.status}`;if(r.status===404)message='リポジトリを確認できません。URLのリポジトリ情報が不明か、プライベートリポジトリの可能性があります。';if(r.status===403)message='GitHub APIの利用制限に達したか、アクセスが制限されています。';throw new Error(message);}
-  return data;
-}
-function rankFile(a,b){
-  const score=x=>{const p=x.path.toLowerCase();let n=0;if(p==='index.html')n-=10000;else if(p.endsWith('/index.html'))n-=5000;if(x.name.toLowerCase()==='index.htm')n-=3000;if(x.name.toLowerCase()==='index.html')n-=2500;n+=p.split('/').length*10;n+=p.length/100;return n;};
-  return score(a)-score(b)||a.path.localeCompare(b.path);
-}
-function render(){
-  const list=$('items');$('count').textContent=`${state.files.length} 件`;
-  if(!state.files.length){list.innerHTML='<div class="empty">このリポジトリにHTMLファイルは見つかりませんでした。</div>';return;}
-  list.innerHTML=state.files.map((f,i)=>`<article class="item ${state.selected&&state.selected.sha===f.sha?'selected':''}"><div class="filemark">H</div><div class="fileinfo"><div class="filename">${esc(f.name)}${i===0?'  ·  自動選択候補':''}</div><div class="filepath">${esc(f.path)}</div></div><div class="actions"><button class="btn ${i===0?'primary':''}" data-index="${i}">${i===0?'選択・プレビュー':'プレビュー'}</button></div></article>`).join('');
-  list.querySelectorAll('button[data-index]').forEach(b=>b.addEventListener('click',()=>selectFile(state.files[Number(b.dataset.index)])));
-}
-function toUtf8(base64){const bin=atob(base64.replace(/\s/g,''));const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new TextDecoder('utf-8').decode(bytes);}
-async function selectFile(file){
-  state.selected=file;$('previewTitle').textContent=`${file.path} → index.html`;$('preview').classList.add('show');$('frame').srcdoc='';$('status').textContent='HTMLの内容を取得しています…';render();
-  try{
-    const blob=await github(`git/blobs/${encodeURIComponent(file.sha)}`);
-    if(blob.encoding!=='base64')throw new Error('対応していないGit blob形式です。');
-    state.content=toUtf8(blob.content);
-    const base=`https://raw.githubusercontent.com/${encodeURIComponent(state.owner)}/${encodeURIComponent(state.repo)}/${encodeURIComponent(state.branch)}/${file.path.split('/').map(encodeURIComponent).join('/')}`;
-    let html=state.content;
-    const baseTag=`<base href="${base.substring(0,base.lastIndexOf('/')+1)}">`;
-    if(/<head[^>]*>/i.test(html))html=html.replace(/<head([^>]*)>/i,match=>match+baseTag);else html=`<!doctype html><html><head>${baseTag}</head><body>${html}</body></html>`;
-    $('frame').srcdoc=html;
-    $('status').textContent='取得完了。選択したファイルを index.html として保存できます。';
-  }catch(err){$('status').textContent=`取得できませんでした：${err.message}`;$('preview').classList.remove('show');}
-}
-function saveAsIndex(){
-  if(!state.content||!state.selected)return;
-  const blob=new Blob([state.content],{type:'text/html;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='index.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
-  $('status').textContent=`${state.selected.path} を index.html として保存しました。`;
-}
-async function start(){
-  const ctx=detectContext();
-  if(!ctx){$('repoName').textContent='リポジトリを自動判定できません';$('repoDetail').textContent='github.dev の「github.dev/所有者/リポジトリ」形式、またはGitHubリポジトリページから開いてください。転送ポートの app.github.dev URLだけでは、HTMLからリポジトリ名を取得できません。';$('items').innerHTML='<div class="error">同一リポジトリの特定に失敗しました。別のリポジトリを検索することはせず、ここで停止しています。</div>';$('count').textContent='判定エラー';return;}
-  state.owner=ctx.owner;state.repo=ctx.repo;state.branch=ctx.branch;
-  $('repoName').textContent=`${ctx.owner}/${ctx.repo}`;$('repoDetail').textContent=`検出元：${ctx.source} · コミット済みファイルのみ`;
-  try{
-    const repo=await github('');
-    if(!state.branch)state.branch=repo.default_branch;
-    $('repoDetail').textContent=`ブランチ：${state.branch} · コミット済みファイルのみ`;
-    const tree=await github(`git/trees/${encodeURIComponent(state.branch)}?recursive=1`);
-    if(!Array.isArray(tree.tree))throw new Error('リポジトリのファイル一覧を取得できませんでした。');
-    state.files=tree.tree.filter(x=>x.type==='blob'&&/\.html?$/i.test(x.path)&&!/(^|\/)(node_modules|vendor|\.git)\//i.test(x.path)).map(x=>({sha:x.sha,path:x.path,name:x.path.split('/').pop(),size:x.size||0})).sort(rankFile);
-    $('repoDetail').textContent+=tree.truncated?' · 一覧はGitHub APIの上限で一部省略されています':'';
-    render();
-    if(state.files.length)await selectFile(state.files[0]);
-    else $('status').textContent='検索完了。HTMLファイルはありませんでした。';
-    if(tree.truncated)$('status').textContent+=' ファイル数が多いため、GitHub APIから返された範囲のみ表示しています。';
-  }catch(err){$('items').innerHTML=`<div class="error">自動検索に失敗しました。<br>${esc(err.message)}<br><br>公開リポジトリであること、URLから所有者名とリポジトリ名を判定できることを確認してください。</div>`;$('count').textContent='検索エラー';}
-}
-$('saveIndex').addEventListener('click',saveAsIndex);$('closePreview').addEventListener('click',()=>{$('preview').classList.remove('show');$('frame').srcdoc='';});
-start();
+  }
+
+  function detectContext() {
+    const urls = [location.href, document.referrer];
+    for (const raw of urls) {
+      const found = parseRepo(raw);
+      if (found) return found;
+    }
+    const meta = document.querySelector('meta[name="github-repository"]');
+    if (meta) {
+      const m = meta.content.match(/^([^/]+)\/([^/]+)$/);
+      if (m) return { owner: m[1], repo: m[2], branch: '', source: 'repository metadata' };
+    }
+    return null;
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[c]));
+  }
+
+  function apiUrl(path) {
+    return `${API}/repos/${encodeURIComponent(state.owner)}/${encodeURIComponent(state.repo)}/${path}`;
+  }
+
+  async function github(path) {
+    const r = await fetch(apiUrl(path), {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      }
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      let message = data.message || `GitHub API error ${r.status}`;
+      if (r.status === 404) message = 'リポジトリを確認できません。URLのリポジトリ情報が不明か、プライベートなリポジトリの可能性があります。';
+      throw new Error(message);
+    }
+    return data;
+  }
+
+  function rankFile(a, b) {
+    const score = (x) => {
+      const p = x.path.toLowerCase();
+      let n = 0;
+      if (p === 'index.html') n -= 10000;
+      else if (p.endsWith('/index.html')) n -= 5000;
+      if (x.name.toLowerCase() === 'index.htm') n -= 3000;
+      if (x.name.toLowerCase() === 'default.html') n -= 2000;
+      if (p.includes('/docs/')) n -= 200;
+      if (p.includes('/public/')) n -= 100;
+      return n;
+    };
+    return score(a) - score(b) || a.path.localeCompare(b.path);
+  }
+
+  function render() {
+    const list = $('items');
+    $('count').textContent = `${state.files.length} 件`;
+    if (!state.files.length) {
+      list.innerHTML = '<div class="empty">このリポジトリにHTMLファイルは見つかりませんでした。</div>';
+      return;
+    }
+
+    list.innerHTML = state.files.map((f, i) => (
+      `<article class="item ${state.selected && state.selected.sha === f.sha ? 'selected' : ''}">
+        <div class="filemark">H</div>
+        <div class="fileinfo">
+          <div class="filename">${esc(f.name)}</div>
+          <div class="filepath">${esc(f.path)}</div>
+        </div>
+        <button type="button" data-index="${i}">表示</button>
+      </article>`
+    )).join('');
+
+    list.querySelectorAll('button[data-index]').forEach((b) => {
+      b.addEventListener('click', () => {
+        selectFile(state.files[Number(b.dataset.index)]);
+      });
+    });
+  }
+
+  function toUtf8(base64) {
+    const bin = atob((base64 || '').replace(/\s/g, ''));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  function buildBaseUrl(filePath) {
+    if (!state.owner || !state.repo || !state.branch) return '';
+    const dir = filePath.includes('/') ? filePath.slice(0, filePath.lastIndexOf('/') + 1) : '';
+    return `https://raw.githubusercontent.com/${encodeURIComponent(state.owner)}/${encodeURIComponent(state.repo)}/${encodeURIComponent(state.branch)}/${dir}`;
+  }
+
+  function wrapStandaloneHtml(rawHtml, filePath) {
+    let html = rawHtml || '';
+    const baseHref = buildBaseUrl(filePath);
+    if (!baseHref) return html;
+    const baseTag = `<base href="${baseHref}">`;
+    if (/<head[^>]*>/i.test(html)) {
+      html = html.replace(/<head([^>]*)>/i, (match) => `${match}${baseTag}`);
+    } else {
+      html = `<!doctype html><html><head>${baseTag}</head><body>${html}</body></html>`;
+    }
+    return html;
+  }
+
+  async function selectFile(file) {
+    state.selected = file;
+    $('previewTitle').textContent = `${file.path} → index.html`;
+    $('preview').classList.add('show');
+    $('frame').srcdoc = '';
+    $('status').textContent = 'HTMLの内容を取得しています…';
+
+    try {
+      const blob = await github(`git/blobs/${encodeURIComponent(file.sha)}`);
+      if (blob.encoding !== 'base64') throw new Error('対応していないGit blob形式です。');
+      state.content = toUtf8(blob.content);
+      const wrapped = wrapStandaloneHtml(state.content, file.path);
+      $('frame').srcdoc = wrapped;
+      $('status').textContent = '取得完了。保存ボタンで index.html として保存できます。';
+    } catch (err) {
+      $('status').textContent = `取得できませんでした：${err.message}`;
+      $('preview').classList.remove('show');
+    }
+  }
+
+  function saveAsIndex() {
+    if (!state.content || !state.selected) return;
+    const prepared = wrapStandaloneHtml(state.content, state.selected.path);
+    const blob = new Blob([prepared], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'index.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    $('status').textContent = `${state.selected.path} を index.html として保存しました。`;
+  }
+
+  async function start() {
+    const ctx = detectContext();
+    if (!ctx) {
+      $('repoName').textContent = 'リポジトリを自動判定できません';
+      $('repoDetail').textContent = 'github.dev の「github.dev/所有者/リポジトリ」形式、または GitHub リポジトリURLから自動判定します。';
+      return;
+    }
+
+    state.owner = ctx.owner;
+    state.repo = ctx.repo;
+    state.branch = ctx.branch;
+
+    $('repoName').textContent = `${ctx.owner}/${ctx.repo}`;
+    $('repoDetail').textContent = `検出元：${ctx.source} · コミット済みファイルのみ`;
+
+    try {
+      const repo = await github('');
+      if (!state.branch) state.branch = repo.default_branch;
+      $('repoDetail').textContent = `ブランチ：${state.branch} · コミット済みファイルのみ`;
+
+      const tree = await github(`git/trees/${encodeURIComponent(state.branch)}?recursive=1`);
+      if (!Array.isArray(tree.tree)) throw new Error('リポジトリのファイル一覧を取得できませんでした。');
+
+      state.files = tree.tree
+        .filter((x) => x.type === 'blob' && /\.html?$/i.test(x.path) && !/(^|\/)(node_modules|vendor|\.git)\//i.test(x.path))
+        .map((x) => ({ sha: x.sha, path: x.path, name: x.path.split('/').pop(), size: x.size }))
+        .sort(rankFile);
+
+      $('repoDetail').textContent += tree.truncated ? ' · 一覧は GitHub API の上限で一部省略されています' : '';
+      render();
+
+      if (state.files.length) {
+        await selectFile(state.files[0]);
+      } else {
+        $('status').textContent = '検索完了。HTMLファイルはありませんでした。';
+      }
+
+      if (tree.truncated) {
+        $('status').textContent += ' ファイル数が多いため、GitHub API から返された範囲のみ表示しています。';
+      }
+    } catch (err) {
+      $('items').innerHTML = `<div class="error">自動検索に失敗しました。<br>${esc(err.message)}<br><br>公開リポジトリであること、URLから所有者名とリポジトリ名が取得できること、GitHub API がアクセス可能なことを確認してください。</div>`;
+      $('status').textContent = '自動検索に失敗しました。';
+    }
+  }
+
+  $('saveIndex').addEventListener('click', saveAsIndex);
+  $('closePreview').addEventListener('click', () => {
+    $('preview').classList.remove('show');
+    $('frame').srcdoc = '';
+  });
+
+  start();
 })();
 </script>
 </body>
